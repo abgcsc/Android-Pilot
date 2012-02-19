@@ -13,6 +13,10 @@ public class Complex implements Parcelable {
 		b = imag;
 	}
 	
+	public Complex (Complex other) {
+		this(other.getReal(), other.getImaginary());
+	}
+	
 	public double getReal(){
 		return a;
 	}
@@ -64,6 +68,10 @@ public class Complex implements Parcelable {
 		return sin().dividedBy(cos());
 	}
 	
+	/**
+	 * Returns e^(a+bi)
+	 * @return
+	 */
 	public Complex exp(){
 		return new Complex (Math.exp(a)*Math.cos(b), Math.exp(a)*Math.sin(b));
 	}

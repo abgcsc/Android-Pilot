@@ -1,6 +1,5 @@
 package csc120.lab6.Tuner;
 
-import java.util.HashMap;
 
 public class MusicNotes {
 	public static final String[] standardScale = 

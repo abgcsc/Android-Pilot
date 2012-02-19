@@ -2,63 +2,175 @@ package csc120.lab6.FFT;
 
 
 public class FastFourierTransform {
-	private static int[] bitReverse = new int [8192]; // stores the reversed-bit index of each index
+	private static final double log2 = Math.log(2);
+	private static int[][] bitReverse; // stores the reversed-bit index of each index
+	private static Complex[][] twiddles; // stores the twiddle factors, pre-computed
+	
+	public static void initialize(int size) {
+		bitReverse = buildBitReverse(size);
+		twiddles = computeTwiddles(size);
+	}
 	
 	/**
-	 * Performs the radix-2 Cooley-Tukey fft.
-	 * @param input
-	 * @return The fft of the given Complex array.
+	 * Performs a fast Fourier transform in place on the given array.
+	 * 
+	 * @param input The array on which a fast Fourier transform is desired. After completion, it will contain the results.
 	 */
-	public static Complex[] fft(Complex[] input) {
+	public static void fft(Complex[] input) {
         int size = input.length;
+        
+        int logSize = (int) (Math.log((double) size) / log2);
 
-        // base case
-        if (size == 1) {
-        	return new Complex[] { input[0] };
-        }
-
-        if ((size % 2) == 1) { 
+        if (Integer.bitCount(size) != 1) { 
         	throw new RuntimeException("Input array's size not a power of 2."); 
         }
-
-        // fft of even half of terms
-        Complex[] half = new Complex[size/2];
-        int i = 0;
-        for (; i < size/2; i++) {
-            half[i] = input[2*i];
+        
+        shuffle(input);
+        int subSize = 1;
+        for(int j = 0; j < logSize; j++) {
+	        for(int k = 0; k < size; ) {
+	        	int ceiling = k+subSize;
+		        for(int i = k; i < ceiling; i++){
+	        		Complex temp = new Complex (input[i]);
+	        		input[i] = temp.plus(twiddles[j][i % subSize].times(input[i+subSize]));
+	        		input[i+subSize] = temp.minus(twiddles[j][i % subSize].times(input[i+subSize]));
+	        		
+	        	}
+		        k = ceiling+subSize;
+	        }
+	        subSize<<=1; // multiply by 2
         }
-        Complex[] even = fft(half);
-
-        // fft of odd half of terms 
-        for (i = 0; i < size/2; i++) {
-            half[i] = input[2*i+1];
-        }
-        Complex[] odd = fft(half);
-
-        Complex[] output = new Complex[size];
-        for (int k = 0; k < size/2; k++) {
-        	Complex twiddle = new Complex (0, 2*Math.PI*k/size);
-            output[k] = even[k].plus(twiddle.exp().times(odd[k]));
-            output[k + size/2] = even[k].minus(twiddle.exp().times(odd[k]));
-        }
-        return output;
     }
 	
 	/**
-	 * Shifts all elements to their final positions of an FFT in the input array.
+	 * Shifts all elements to their final positions of an FFT in the input array. Modifies given array. May be undone with a repeat call.
 	 * 
 	 * @param input
 	 * @param size
 	 * @param floor
 	 */
-	private static void shuffle(Complex[] input, int size, int floor){
-		
-	}
-	
-	private static void buildBitReverse() {
-		int size = bitReverse.length;
-		for(int i = 0; i < size; i++) {
-			bitReverse[i] = Integer.reverse(i);
+	private static void shuffle(Complex[] input){
+		int ceiling = input.length/2;
+		for(int i = 0; i < ceiling; i++) {
+			Complex temp = input[i];
+			input[i] = input[bitReverse[0][i]];
+			input[bitReverse[0][i]] = temp;
 		}
 	}
+	
+	public static int[][] buildBitReverse(int size) {
+		if (Integer.bitCount(size) != 1) { 
+        	throw new RuntimeException("Input array's size not a power of 2."); 
+        }
+		int logSize = (int) (Math.log((double) size) / log2);
+		int[][] bits = new int [logSize][];
+		for(int j = 0; j < logSize; j++) {
+			bits[j] = new int [size];
+		}
+		for(int i = 0; i < size; i++) {
+			bits[0][i] = reverseBits(i, logSize);
+			bits[logSize-1][i] = i;
+			for(int j = 1; j < logSize-1; j++) {
+				bits[j][i] = rotateLeft(bits[j-1][i], j+1);
+			}
+		}
+		return bits;
+	}
+	
+	/**
+	 * Reverse the lower bitSize bits of the given integer.
+	 * @param in
+	 * @param bitSize
+	 * @return
+	 */
+	public static int reverseBits(int in, int bitSize){
+		if(bitSize > 32) bitSize = 32;
+		if(bitSize > 0) {
+			int reversed = 0;
+			int shift = 1 << (bitSize-1);
+			for(int j = 0; j < bitSize; j++) {
+				reversed += (shift)*(in % 2);
+				shift>>>=1;
+				in >>>= 1;
+			}
+			return reversed;
+		}
+		return in;
+	}
+	
+	/**
+	 * Rotate the lower bitSize bits of the given integer to the right by 1 bit.
+	 * @param in
+	 * @param bitSize
+	 * @return
+	 */
+	public static int rotateRight(int in, int bitSize){
+		if(bitSize > 32) { bitSize = 32;}
+		if (bitSize > 1) {
+			int carry = in % 2;
+			int shift = 1;
+			for(int j = 1; j < bitSize; j++) {
+				in = in & ~shift;
+				shift<<=1;
+				in+=((shift&in)>>>1);
+			}
+			if(carry == 0) {
+				in = in & ~shift;
+			}
+			else {
+				in = in | shift;
+			}
+		}
+		return in;
+	}
+	
+	/**
+	 * Rotate the lower bitSize bits of the given integer to the left by 1 bit.
+	 * @param in
+	 * @param bitSize
+	 * @return
+	 */
+	public static int rotateLeft(int in, int bitSize){
+		if(bitSize > 32) { bitSize = 32;}
+		if (bitSize > 1) {
+			int shift = 1 << (bitSize-1);
+			int carry = Integer.bitCount(in & shift); 
+			for(int j = 1; j < bitSize; j++) {
+				in = in & ~shift;
+				shift>>>=1;
+				in+=((shift&in)<<1);
+			}
+			if(carry == 0) {
+				in = in & ~carry;
+			}
+			else {
+				in = in | carry;
+			}
+		}
+		return in;
+	}
+	
+	/**
+	 * Computes the twiddle factors for sizes 1, 2, 4, 8, ... size/2.
+	 * @param size The full size of the input array. Must be a power of 2.
+	 * @return A 2D array of twiddle factors.
+	 */
+	public static Complex[][] computeTwiddles(int size) {
+		if (Integer.bitCount(size) != 1) { 
+        	throw new RuntimeException("Input array's size not a power of 2."); 
+        }
+		int logSize = (int) (Math.log((double) size) / log2);
+		int subSize = 1;
+		Complex[][] twiddles = new Complex[logSize][];
+		for(int i = 0; i < logSize; i++) {
+			twiddles[i] = new Complex[subSize];
+			for(int k = 0; k < subSize; k++) {
+				twiddles[i][k] = new Complex (0, - 2 *k * Math.PI / (subSize*2)).exp();
+			}
+			subSize*=2;
+		}
+		
+		return twiddles;
+	}
+	
 }

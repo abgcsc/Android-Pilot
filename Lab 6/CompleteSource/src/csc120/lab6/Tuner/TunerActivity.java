@@ -3,13 +3,10 @@ package csc120.lab6.Tuner;
 import csc120.lab6.FFT.Complex;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,19 +20,26 @@ public class TunerActivity extends Activity implements OnClickListener{
     public ProgressBar rightBar;
     public TextView frequencyDisplay;
     public TextView noteDisplay;
-    private double[] thresholds = new double[4096]; // magnitude thresholds
-    private double[] tFrequencies = new double[4096]; // threshold frequencies
+    private double[] thresholds = new double[SoundAnalyzer.getBufferSize()/2]; // magnitude thresholds
+    private double[] tFrequencies = new double[SoundAnalyzer.getBufferSize()]; // threshold frequencies
     public static Bundle b = new Bundle();
     String lastNote = "A4";
     MusicNotes Notes = new MusicNotes();
     public static int audioFlag = 0; // 0 = not reading, 1 = has read
-    private SoundAnalyzer mService;
+    int tSwitch = 0;
+    //private SoundAnalyzer mService;
     
     private BroadcastReceiver receiver = new BroadcastReceiver() {
    	 	@Override
    	 	public void onReceive(Context context, Intent intent) {
    	 		Log.d("TunerActivity Receiver", "Got message.");
-   	 		tune();
+   	 		if(tSwitch == 0) {
+   	 			tune();
+   	 		}
+   	 		else {
+   	 			tare();
+   	 			tSwitch = 0;
+   	 		}
    	 		sendRequest();
    	 	}
     };
@@ -64,8 +68,8 @@ public class TunerActivity extends Activity implements OnClickListener{
         Button tare = (Button) this.findViewById(R.id.tareBttn);
         tare.setOnClickListener(this);
         //sendRequest(); //get first tare
-        //bindService(intentAudio, iConnection, Context.BIND_AUTO_CREATE);
         //tare();
+        tSwitch = 1; // tare with the first input
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("AudioEvent"));
         // start cycle
         sendRequest();
@@ -83,7 +87,7 @@ public class TunerActivity extends Activity implements OnClickListener{
 			this.finish();
 			break;
 		case R.id.tareBttn:
-			tare();
+			tSwitch = 1;
 			break;
 		}
 	}
@@ -106,12 +110,12 @@ public class TunerActivity extends Activity implements OnClickListener{
 	 * The main method, it finds the maximum frequency and the nearest note.
 	 */
 	public void tune() {
-		double[] latestMags = new double[4096], latestFreqs = new double[4096];
+		double[] latestMags = new double[SoundAnalyzer.getBufferSize()/2], latestFreqs = new double[SoundAnalyzer.getBufferSize()];
 		getFreq(latestMags, latestFreqs);
 		int max = getMax(latestMags);
 		if(max != -1) {
 			// note detected
-			double rawFreq = latestFreqs[max];
+			double rawFreq = interpolateMaxFrequency(latestMags, max); //latestFreqs[max];
 			int size = Notes.getNotes().length;
 			double[] notes = new double[size];
 			double log2 = Math.log(2);
@@ -140,14 +144,13 @@ public class TunerActivity extends Activity implements OnClickListener{
 	}
 	
 	public int getMax(double[] magnitudes){
-		int max = 0;
+		int max = 1;
 		int flag = 0;
-		if(magnitudes[0] > thresholds[0]) {
-			max = 0;
+		if(magnitudes[1] > thresholds[1]) {
+			max = 1;
 			flag = 1;
 		}
-		
-		for(int z = 0; z < magnitudes.length; z++){
+		for(int z = 1; z < magnitudes.length-1; z++){
 			if(magnitudes[z] > magnitudes[max] && magnitudes[z] > thresholds[z]){
 				max = z;
 				flag = 1;
@@ -169,7 +172,7 @@ public class TunerActivity extends Activity implements OnClickListener{
 				getMagnitudes(rMagnitudes, magnitudes);
 				//int rate = TunerActivity.b.getInt("SampleRate", 44100);
 				int rate = SoundAnalyzer.getSamplingFrequency();
-				getFrequencies(magnitudes.length, rate, frequencies);
+				getFrequencies(frequencies.length, rate, frequencies);
 			}
 			else {
 				magnitudes = null;
@@ -202,5 +205,9 @@ public class TunerActivity extends Activity implements OnClickListener{
 		return destination;
 	}
 	
+	private double interpolateMaxFrequency(double[] magnitudes, int peakedBin) {
+		double p = 0.5*(magnitudes[peakedBin-1]-magnitudes[peakedBin+1])/(magnitudes[peakedBin-1]-2*magnitudes[peakedBin]+magnitudes[peakedBin+1]);
+		return ((double) peakedBin+p)*(double)SoundAnalyzer.getSamplingFrequency()/(double)SoundAnalyzer.getBufferSize();
+	}
 	
 }
