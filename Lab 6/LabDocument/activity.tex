@@ -1,8 +1,70 @@
 %describe the tasks to be completed that will satisfy the given objective
 \section{Activity}
 
-Phasellus at velit id justo gravida convallis et eget ligula. Ut id tortor erat, congue tristique urna. Nulla id arcu nibh. Proin a lectus ante. Mauris sed libero enim. Etiam urna velit, tempor sed pharetra in, lacinia ac metus. Curabitur eget sem risus. Morbi sed est velit, nec molestie nisi. Aliquam erat volutpat. Suspendisse potenti. Sed sed volutpat leo.
+There are several tasks that you must complete in order to have a functional tuner.
+First, though the Complex class has been provided, it is not completely implemented.
+Before the \ac{fft} will work, you must provide the implementation for the following functions: \verb=plus=, \verb=minus=, \verb=times=, and \verb=dividedBy=.
+Each function takes a Complex parameter and returns a Complex argument.
+As a hint for the division of two complex numbers, consider multiplying the numerator and denominator of the fraction 
+\begin{math}
+(a+bi) / (c+di)
+\end{math} 
+ by the conjugate of the  denominator.
 
-Nulla facilisi. Aliquam erat volutpat. Vestibulum ut arcu ligula. Nam quis lorem et mauris dictum lacinia. Pellentesque malesuada laoreet velit, sit amet sodales quam pulvinar id. Sed eu feugiat urna. Aliquam eu velit imperdiet est congue ullamcorper. Vivamus mi urna, egestas at suscipit ac, tempus ac nisl. Quisque mauris velit, viverra eget facilisis at, tincidunt vel nunc. Nunc odio sapien, ullamcorper a rutrum ut, auctor eget nulla. Sed at mi eu turpis pulvinar rutrum in in justo. Maecenas gravida aliquet sem interdum tincidunt. Proin varius nisl vitae ante blandit aliquam.
+The second major component is the SoundAnalyzer class.
+The bulk of your work will likely be concentrated here.
+The \verb=SoundAnalyzer= class fulfills the following objectives: it reads audio from the microphone, it provides input to the \ac{fft}, and it analyzes the \ac{fft}'s output.
+Audio should be read in a similar manner to the method used in the Alarm lab at a rate of 44.1 kHz (that's 44,100 times per second) into an array of shorts.
+These shorts are then transferred into the real components of a complex array (whose imaginary components are zero), and provided directly to the \ac{fft}.
+The size of this array must be a power of 2. 
+Fortunately, Android should automatically provide you one of that size.
+4096 is a suitable number of array elements, though you may wish to increase this for improved frequency resolution or decrease it for improved responsiveness.
+Everything in \verb=SoundAnalyzer= should be contained or accessible from within the function \verb=onHandleIntent=.
 
-Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nunc non velit viverra dui dapibus tempus et eget tortor. Aliquam id lorem sapien, vel faucibus felis. Vestibulum vehicula luctus lacus, eu dignissim velit dapibus a. Cras convallis erat rutrum odio suscipit vitae tempus purus adipiscing. Aenean vel leo nisi, vel ullamcorper augue. Maecenas at metus nec purus adipiscing rutrum in ac sem. Etiam lorem mauris, scelerisque id ultricies vitae, sagittis at nisl. In ut mi libero, eget consequat enim. Mauris a lacus nunc, varius sollicitudin ipsum. Vestibulum vitae ligula urna. Aenean hendrerit euismod suscipit. Duis quis egestas quam. Donec laoreet hendrerit est sit amet egestas. Cras rutrum odio felis, ac sodales leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
+The output of the \ac{fft} is of course the same size and type as its input since it modifies the input array.
+Even though the \ac{fft} produces a frequency decomposition, the output is not quite completely processed.
+For example, the complex numbers now have real and imaginary components. 
+This is easily remedied.
+Just take the magnitude, $a^2 + b^2$, of the complex numbers; these magnitudes will correspond to the peaks of the Fourier transform as seen on the right side of Figures~\ref{fig:cft} and~\ref{fig:dft}.
+
+You then need to figure out which magnitude matches with what frequency.
+This is fairly straightforward, especially since the magnitudes are already ordered by frequency.
+Consider this: you took samples at a rate of 44.1 kHz, and you have a certain number of frequencies for which you have calculated magnitudes that must cover that spectrum from 0 to 44.1 kHz.
+In other words, your frequency distribution is evenly spread out across your sampling rate such that your lowest frequency corresponds to 0 Hz and your highest to 44.1 kHz.
+The consequence of this is that, as predicted, you do not have well-defined frequencies.
+Instead, you have bins of $width=(sample rate)/(array size)$.
+It should be noted that since humans cannot hear above about ~20,000 Hz, the second half of these bins may be safely ignored.
+
+The next step is to determine the representative frequency. 
+The method you choose determines how effective your tuner is at its intended task.
+The simplest method is to simply choose the frequency bin with the largest magnitude, but this solution is inflexible and unresponsive.
+In addition, it may be inaccurate since musical instruments usually have overtones that may hide the fundamental frequency.
+Don't be discouraged, however; it is acceptable if your tuner can identify a pure tone with its nearest note.
+For an example of a pure tone and an excellent test resource, simply search "a440" on YouTube and listen to the first clip.
+Alternative methods include curve fitting, interpolation, and harmonic analysis.
+Keep in mind that the method you use is not the point of this lab.
+However, it can be a nice personal touch that can make your tuner stand out from the rest.
+The only requirement concerning your solution is that it must make use of the \ac{fft} and its output.
+
+Once you have identified the fundamental frequency, you must label it with a note.
+We will assume that we are using the equal temperament chromatic scale.
+In this scale, there are 12 notes in an octave, with an octave merely an ordered collection of notes before they start over.
+That is, each octave contains the same 12 notes.
+The notes are as follows: A, A\#, B, C, C\#, D, D\#, E, F, F\#, G, G\#, with \# pronounced "sharp."
+The standard American scale is based upon the note A 440, which is the A note, 4th octave, at 440 Hz.
+Each octave is a factor of 2 larger or smaller than the next or previous.
+That is, A3 is 220 Hz and A5 is 880 Hz.
+In addition, each note is evenly spread out in an octave in equal temperament, such that every note is a constant factor away from its neighbors.
+Since we are on a 12 note scale, this constant factor is the twelfth root of two, $ \sqrt[12]{2}$.
+Note that since each successive octave is twice the size of the previous and the gap between notes gets larger and larger, simply finding the closest note to your estimated fundamental may not be sufficient in all cases.
+You may consider using a log scale to address this issue (that is, taking the logarithm of the frequencies).
+It is required that you implement the musical scale in its own class.
+
+Finally, at this stage you should have a note in mind that you think the user is trying to play.
+A simple function is provided in the class, \verb=updateGUI=, that takes four parameters to update the display for the user.
+The parameters in order are as follows: the note with octave (e.g. C\#4),  the estimated fundamental frequency, how far below the note the frequency is, and how far above the note the frequency is.
+Clearly, if the frequency is either above or below the note, then the third or fourth parameter should be zero, respectively.
+The call to \verb=updateGUI= and any final calculations should be contained within the \verb=tune= function.
+
+As always, it is recommended that you do not alter the code that is provided to you as this may make the problem immensely more difficult.
+

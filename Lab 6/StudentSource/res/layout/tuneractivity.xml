@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/noteDisp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Note"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView
+        android:id="@+id/freqText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Frequency"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:id="@+id/progressLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+        
+		<csc120.lab6.Tuner.inverseSeekBar 
+		    android:id="@+id/leftProgress"
+			style="?android:attr/progressBarStyleHorizontal"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1" android:clickable="false"/>
+        <ProgressBar
+            android:id="@+id/rightProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="156dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.01" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/stopBttn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stop" />
+
+    <Button
+        android:id="@+id/tareBttn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tare" />
+
+</LinearLayout>

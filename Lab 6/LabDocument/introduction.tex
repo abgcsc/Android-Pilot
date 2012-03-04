@@ -24,3 +24,17 @@ Figure~\ref{fig:dft} on the other hand illustrates the expected results of a dis
 \label{fig:dft}
 \end{figure}
 As you can see, the frequency decomposition is not as well-defined in the discrete case.
+This lack of definition is due to the fact that the information given is incomplete and noisy.
+If you were to increase the number of samples taken, the frequency decomposition would expectedly become cleaner.
+However, taking more samples has a drawback in that it takes longer to process, much less collect them.
+The continuous case is basically the result of extending this thought and taking an infinite amount of samples.
+Since we can't take an infinite amount of samples, we'll just have to settle with the rough peak in the discrete transform.
+
+In Java, the \ac{fft} is implemented as a static function of the FastFourierTransform class.
+It takes an array of Complex objects as input, and places its output inside the given array.
+This means that once you give it something, the input is lost (that is, unless you want to implement the Inverse\ac{fft}).
+
+The Complex objects the \ac{fft} takes as arguments are simply representations of complex numbers $a+bi$, where $a$ is the real part and $b$ is the imaginary part.
+Complex numbers are intimately related to waves and the \ac{fft}, but the only extent to which you need to understand them is very basic.
+As long as you can perform the basic operations of addition, subtraction, multiplication, and division, you should be fine.
+The FastFourierTransform and Complex classes are provided for you in the package {\em csc120.lab6.FFT}.
