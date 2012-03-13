@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget73"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <ImageButton
+        android:id="@+id/soundImage"
+        android:layout_width="211px"
+        android:layout_height="287px"
+        android:layout_weight="0.21"
+        android:src="@drawable/speaker"
+        android:onClick="soundAlarm" />
+
+    <RadioGroup
+        android:id="@+id/widget61"
+        android:layout_width="241px"
+        android:layout_height="59px"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/sound1RB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sound 1 "
+            android:onClick="setSound" />
+
+        <RadioButton
+            android:id="@+id/sound2RB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sound 2 "
+            android:onClick="setSound" />
+
+        <RadioButton
+            android:id="@+id/sound3RB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sound 3"
+            android:onClick="setSound" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/activateButton"
+        android:layout_width="119px"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Activate"
+        android:onClick = "activate" />
+
+    <Button
+        android:id="@+id/soundButton"
+        android:layout_width="119px"
+        android:layout_height="wrap_content"
+        android:text="Sound Alarm"
+        android:onClick="soundAlarm" />
+
+</TableLayout>
