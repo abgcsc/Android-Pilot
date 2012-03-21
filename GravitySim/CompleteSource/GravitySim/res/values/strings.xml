@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, GravitySimActivity!</string>
+    <string name="app_name">GravitySim</string>
+    <string name="press_start">Press Start to begin simulation</string>
+    <string name="start">Start</string>
+    <string name="lock">Lock</string>
+    <string name="play">Play</string>
+    <string name="quit">Quit</string>
+
+</resources>
