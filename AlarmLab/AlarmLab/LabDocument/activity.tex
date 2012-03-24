@@ -2,92 +2,30 @@
 \section{Activity}
 
 \subsection{Research}
-Research the the MediaPlayer and MediaRecorder classes and methods. List which methods you believe will be crucial in programming the alarm system.
+Research the \verb=MediaPlayer= and \verb=MediaRecorder= classes and methods. List which methods you believe will be crucial in programming the alarm system.
 
 \subsection{Explore}
-Open the AlarmSystemActivity.java file. Explore the file. Read the comments. Note the parts of the code that you will be required to fill in. They will be labeled.
+Open the \verb=AlarmSystemActivity.java= file. Explore the file. Read the comments. Note the parts of the code that you will be required to fill in. They will be labeled.
 
 \subsection{Import}
-In order to use the classes and methods from APIs, you have to import the required libraries. Import the MediaPlayer and MediaRecorder libraries by inserting the following code at the beginning of the code below the other imports:
-	
-\begin{center}
-
-\includegraphics[scale=1]{imports.png} 
-
-\end{center}
-
+In order to use the classes and methods from APIs, you have to import the required libraries. Import the \verb=MediaPlayer= and \verb=MediaRecorder= libraries.
 
 \subsection{Create}
-Now we will create the media class instances and set them to null:\\
-
-\begin{center}
-
-\includegraphics[scale=1]{instances.png} 
-
-\end{center}
-
-\noindent	
-And then instantiate them in the onCreate method:\\
-
-\begin{center}
-
-\includegraphics[scale=1]{instantiate.png} 
-
-\end{center}
-
-\noindent
-The MediaPlayer instance (mp) is created with its context set to this and its loaded sound set to Sound 1 (R.raw.caralarm1).
+Now we will create the media class instances, set them to null, and then instantiate them in the \verb=onCreate()= method. The \verb=MediaPlayer= instance needs to be instantiated with the sound loaded to play. To do this, use the create method with \verb=this= and \verb=R.raw.caralarm1= as the two parameters.
 
 \subsection{Sound Alarm Programming}
-Now, let's program the buttons to sound the alarm. When the speaker button or sound alarm button is clicked, we want to play or stop the sound depending on if the alarm is already sounding. To do this, we will use the isPlaying() method in the MediaPlayer class to determine if (mp) is currently playing.\\
-
-\begin{center}
-
-\includegraphics[scale=1]{ifelseSound.png} 
-
-\end{center}
-
-\subsection{Activate Research}
-Next, we will program the activate button. This will be done in the listen method of the code. There are 4 functions in the MediaRecorder instance that must run before it can start recording. Research how MediaRecorder works and determine what these 4 functions are. Provide the link to the site where you found the information.
+Now, let's program the buttons to sound the alarm. When the speaker button or sound alarm button is clicked, we want to play or stop the sound depending on if the alarm is already sounding. Research how to start the \verb=MediaPlayer= and determine if it is already playing.
 
 \subsection{Activate Programming}
-Now, that you know what these 4 functions are and what they do, let's code:\\
-
-\begin{center}
-
-\includegraphics[scale=1]{mediaRecorder.png} 
-
-\end{center}
-
-\noindent	
-The output file uses a file declared earlier in the code. You do not need to worry about this file. It has already been coded.
+Next, we will program the activate button. This will be done in the listen method of the code. There are 4 functions in the \verb=MediaRecorder= instance that must run before it can start recording. Research how \verb=MediaRecorder= works and determine what these 4 functions are. One of the functions requires an output file. The parameter for this function is \verb=audiofile.getAbsolutePath()=. The \verb=audiofile= variable was declared earlier in the code. 
 
 \subsection{Record}
-With the MediaRecorder (mr) ready to record, now let's start recording:\\
-
-\begin{center}
-
-\includegraphics[scale=1]{startRecord.png} 
-
-\end{center}
-
-\noindent
-Research the prepare method. Why does it have to be called before start the recorder?
+With the \verb=MediaRecorder= (mr) ready to record, determine the functions needed to start recording and code it. Why does the prepare method have to be called before the recorder is started?
 
 \subsection{Analyze}
-Next, we will analyze the recorded audio to determine if the amplitude has reached a certain point. Which method in the MediaRecorder class do you think would be helpful in achieving this?\\
+Next, we will analyze the recorded audio to determine if the amplitude has reached a certain point. Which method in the \verb=MediaRecorder= class do you think would be helpful in achieving this?
 
-\noindent
-In order to accomplish this, we will set up a loop that continually checks the maximum amplitude reached, and then check it against the threshold we set up:\\
-
-\begin{center}
-
-\includegraphics[scale=1]{amp.png} 
-
-\end{center}
-
-\noindent
-Everything is now coded except for the amplitude threshold to check for. Test this number and determine which amplitude will be the best. You can research the range this value can be.
+In order to accomplish this, we will set up a loop that continually checks the maximum amplitude reached, and then check it against a threshold we set up.
 
 \subsection{Summary List}
-The alarm system should now be working properly. Create a list of all the methods used from the MediaPlayer and MediaRecorder libraries with a description of what the method does and what it accomplished in the program.
+The alarm system should now be working properly. Create a list of all the methods used from the \verb=MediaPlayer= and \verb=MediaRecorder= libraries with a description of what the method does and what it accomplished in the program.

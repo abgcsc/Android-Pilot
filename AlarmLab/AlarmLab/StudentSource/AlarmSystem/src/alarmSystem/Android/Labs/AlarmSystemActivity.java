@@ -1,3 +1,6 @@
+//if compiled before completing lab, you will get errors involving the Media Player instance.
+//this is because the lab calls for you to declare and instantiate mp
+
 package alarmSystem.Android.Labs;
 
 import java.io.File;
@@ -62,9 +65,7 @@ public class AlarmSystemActivity extends Activity {
     	//start recording
     	
     	
-    	//STUDENTS CODE - this could be a cool problem - how to check for sound using getMaxAmplitdue
-    	//STUDENTS CODE - also, trying to decide what should be the threshold (3000 in this case)
-    	//check for sound and sound alarm accordingly
+    	//STUDENTS CODE - analyze amplitude and sound alarm accordingly
     
     		
     	
@@ -76,6 +77,7 @@ public class AlarmSystemActivity extends Activity {
     public void activate(View view) throws IllegalArgumentException, SecurityException, IllegalStateException, IOException, InterruptedException {
     	
     	//asks user if they really want to activate alarm
+
     	final AlertDialog alert = new AlertDialog.Builder(this).create();
     	alert.setTitle("Are you sure you want to activate?");
     	alert.setButton("Yes", new DialogInterface.OnClickListener() {
@@ -83,13 +85,16 @@ public class AlarmSystemActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				
 				try {
+
 					//stops alarm if already sounding
 					if(mp.isPlaying()==true){
 			    		mp.stop();
 						mp.prepare();
 					}
+
 					//calls function to listen
 					listen();
+
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -97,6 +102,7 @@ public class AlarmSystemActivity extends Activity {
 				return;
 			}
 		});
+
     	alert.setButton2("Cancel", new DialogInterface.OnClickListener() {
 			
 			public void onClick(DialogInterface dialog, int which) {
@@ -105,6 +111,7 @@ public class AlarmSystemActivity extends Activity {
 				
 			}
 		});
+
     	//displays alert dialog
     	alert.show();
     	
