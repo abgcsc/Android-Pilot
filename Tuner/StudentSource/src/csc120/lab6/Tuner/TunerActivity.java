@@ -1,6 +1,5 @@
 package csc120.lab6.Tuner;
 
-import csc120.lab6.FFT.Complex;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,10 +21,10 @@ import android.support.v4.content.LocalBroadcastManager;
  *
  */
 public class TunerActivity extends Activity implements OnClickListener{
-    public ProgressBar leftBar;
-    public ProgressBar rightBar;
-    public TextView frequencyDisplay;
-    public TextView noteDisplay;
+    public ProgressBar leftBar; // GUI element that indicates the flatness of the note
+    public ProgressBar rightBar; // GUI element that indicates the sharpness of the note
+    public TextView frequencyDisplay; // GUI element that displays the estimated frequency
+    public TextView noteDisplay; // GUI element that displays the estimated note (e.g. C#4)
     
     /**
      * Android construct - controls feedback loop with SoundAnalyzer
@@ -40,7 +39,7 @@ public class TunerActivity extends Activity implements OnClickListener{
     };
     
     /**
-     * Android function - requests that an audio sample be analyzed
+     * Android function - requests that an audio sample be collected and analyzed
      */
     public void sendRequest() {
     	Intent request = new Intent(this, SoundAnalyzer.class);
@@ -98,7 +97,7 @@ public class TunerActivity extends Activity implements OnClickListener{
 	
 	/**
 	 * Student:
-	 * This function may include any part of your analysis after you obtain the frequencies. 
+	 * This function may include any part of your analysis after you obtain the frequency magnitudes from the FFT. 
 	 * It will automatically be called continuously in concert with SoundAnalyzer.onHandleIntent().
 	 */
 	public void tune() {
@@ -124,7 +123,7 @@ public class TunerActivity extends Activity implements OnClickListener{
 	 * Student:
 	 * This part is optional, but may help improve your functionality. 
 	 * This function would provide interactive thresholding and noise handling.
-	 * For example, you could press the tare button 
+	 * For example, you could press the tare button to mask background noise.
 	 */
 	private void tare(){
 		

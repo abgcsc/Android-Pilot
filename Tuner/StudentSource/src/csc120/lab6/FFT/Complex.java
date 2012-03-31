@@ -12,13 +12,13 @@ import android.os.Parcelable;
  */
 public class Complex implements Parcelable {
 	
-	private double a;
-	private double b;
+	private double a; // the real component
+	private double b; // the imaginary component
 	
 	/**
 	 * Creates a new complex number equal to real+imag*i.
-	 * @param real
-	 * @param imag
+	 * @param real The real component of the new Complex object.
+	 * @param imag The imaginary component of the new Complex object.
 	 */
 	public Complex (double real, double imag){
 		a = real;
@@ -27,7 +27,7 @@ public class Complex implements Parcelable {
 	
 	/**
 	 * Creates a copy of the given complex number.
-	 * @param other
+	 * @param other The Complex object to be copied.
 	 */
 	public Complex (Complex other) {
 		this(other.getReal(), other.getImaginary());
@@ -49,7 +49,7 @@ public class Complex implements Parcelable {
 	
 	/**
 	 * Returns the sine of this complex number.
-	 * @return
+	 * @return The sine of this complex number.
 	 */
 	public Complex sin(){
 		return new Complex (Math.sin(a)*Math.cosh(b), Math.cos(a)*Math.sinh(b));
@@ -57,7 +57,7 @@ public class Complex implements Parcelable {
 	
 	/**
 	 * Returns the cosine of this complex number.
-	 * @return
+	 * @return The cosine of this complex number.
 	 */
 	public Complex cos(){
 		return new Complex (Math.cos(a)*Math.cosh(b), Math.sin(a)*Math.sinh(b));
@@ -65,15 +65,17 @@ public class Complex implements Parcelable {
 	
 	/**
 	 * Returns the tangent of this complex number.
-	 * @return
+	 * @return The tangent of this complex number.
 	 */
 	public Complex tan(){
 		return sin().dividedBy(cos());
 	}
 	
 	/**
-	* Formula from "How to Find the Square Root of a Complex Number." Stanley Rabinowitz.
-	*/
+	 * Calculates the square root of this complex number.
+	 * Formula from "How to Find the Square Root of a Complex Number." Stanley Rabinowitz.
+	 * @return The square root of this complex number.
+	 */
 	public Complex sqrt(){
 		return new Complex (1/Math.sqrt(2)*Math.sqrt(Math.sqrt(a*a+b)+a), 
 				1/Math.sqrt(2)*Math.sqrt(Math.sqrt(a*a+b)-a));
@@ -81,7 +83,7 @@ public class Complex implements Parcelable {
 	
 	/**
 	 * Returns e^(a+bi)
-	 * @return
+	 * @return e^(a+bi)
 	 */
 	public Complex exp(){
 		return new Complex (Math.exp(a)*Math.cos(b), Math.exp(a)*Math.sin(b));
@@ -105,7 +107,7 @@ public class Complex implements Parcelable {
 	}
 	
 	/**
-	 * Android function
+	 * Android construct
 	 */
 	public static final Parcelable.Creator<Complex> CREATOR
 		= new Parcelable.Creator<Complex>() {
@@ -121,7 +123,7 @@ public class Complex implements Parcelable {
 	
 	/**
 	 * Android function
-	 * @param in
+	 * @param in A Parcel condensed from a Complex object.
 	 */
 	public Complex (Parcel in) {
 		a = in.readDouble();

@@ -2,12 +2,10 @@ package csc120.lab6.Tuner;
 
 import android.app.IntentService;
 import android.content.Intent;
-//import android.content.IntentFilter;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.support.v4.content.LocalBroadcastManager;
-import csc120.lab6.FFT.*;
 
 /**
  * Class SoundAnalyzer is responsible for the frequency analysis of the incoming sound
@@ -47,13 +45,13 @@ public class SoundAnalyzer extends IntentService{
 		* pass it through the FFT,
 		* analyze the audio,
 		* pick a representative frequency,
-		* and save the results in static variables.
+		* and save the results in static variables for external access.
 		**/
-		sendMessage();
+		sendMessage(); // this should be the last line of the function
 	}
 	
 	/**
-	 * Android function
+	 * Android function -  called when the Service is created
 	 */
 	@Override
 	public void onCreate() {
@@ -61,7 +59,7 @@ public class SoundAnalyzer extends IntentService{
 	}
 	
 	/**
-	 * Android function
+	 * Android function - called when the Service is finished
 	 */
 	@Override
 	public void onDestroy() {
@@ -69,7 +67,7 @@ public class SoundAnalyzer extends IntentService{
 	}
 	
 	/**
-	 * Android function
+	 * Android function - Informs anybody interested that the audio analysis is complete.
 	 */
 	public void sendMessage() {
 		Intent audioEvent = new Intent("AudioEvent");

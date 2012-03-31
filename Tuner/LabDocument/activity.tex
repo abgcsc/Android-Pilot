@@ -2,48 +2,48 @@
 \section{Activity}
 
 There are several tasks that you must complete in order to have a functional tuner.
-First, though the Complex class has been provided, it is not completely implemented.
-Before the \ac{fft} will work, you must provide the implementation for the following functions: \verb=plus=, \verb=minus=, \verb=times=, and \verb=dividedBy=.
-Each function takes a Complex parameter and returns a Complex argument.
+First, though the \verb=Complex= class has been provided, it is not completely implemented.
+Before the \ac{fft} will work, you must provide the implementation for the following functions: \verb=plus()=, \verb=minus()=, \verb=times()=, and \verb=dividedBy()=.
+Each function takes a \verb=Complex= parameter and returns a \verb=Complex= argument.
 As a hint for the division of two complex numbers, consider multiplying the numerator and denominator of the fraction 
 \begin{math}
 (a+bi) / (c+di)
 \end{math} 
- by the conjugate of the  denominator.
+ by the conjugate of the  denominator, $c-di$.
 
-The second major component is the SoundAnalyzer class.
+The second major component is the \verb=SoundAnalyzer= class.
 The bulk of your work will likely be concentrated here.
 The \verb=SoundAnalyzer= class fulfills the following objectives: it reads audio from the microphone, it provides input to the \ac{fft}, and it analyzes the \ac{fft}'s output.
-Audio should be read in a similar manner to the method used in the Alarm lab at a rate of 44.1 kHz (that's 44,100 times per second) into an array of shorts.
+Audio should be read in a similar manner to the method used in the Alarm lab at a rate of 44.1 kHz (44,100 times per second) into an array of shorts.
 These shorts are then transferred into the real components of a complex array (whose imaginary components are zero), and provided directly to the \ac{fft}.
 The size of this array must be a power of 2. 
 Fortunately, Android should automatically provide you one of that size.
 4096 is a suitable number of array elements, though you may wish to increase this for improved frequency resolution or decrease it for improved responsiveness.
+\verb=FastFourierTransform.initialize()= should be called once for each time that you wish to change the size of the \ac{fft} input array.
+The \verb=AudioRecord= class is strongly recommended for audio acquisition with 16-bit PCM encoding.
 Everything in \verb=SoundAnalyzer= should be contained or accessible from within the function \verb=onHandleIntent=.
 
-The output of the \ac{fft} is of course the same size and type as its input since it modifies the input array.
+The output of \verb=FastFourierTransform.fft()= is of course the same size and type as its input since it modifies the input array, though strictly speaking it returns \verb=void=.
 Even though the \ac{fft} produces a frequency decomposition, the output is not quite completely processed.
 For example, the complex numbers now have real and imaginary components. 
 This is easily remedied.
 Just take the magnitude, $a^2 + b^2$, of the complex numbers; these magnitudes will correspond to the peaks of the Fourier transform as seen on the right side of Figures~\ref{fig:cft} and~\ref{fig:dft}.
 
-You then need to figure out which magnitude matches with what frequency.
-This is fairly straightforward, especially since the magnitudes are already ordered by frequency.
-Consider this: you took samples at a rate of 44.1 kHz, and you have a certain number of frequencies for which you have calculated magnitudes that must cover that spectrum from 0 to 44.1 kHz.
+You then need to figure out which frequency matches with each magnitude, which is fairly straightforward, especially since the magnitudes are already ordered by frequency.
+Consider the following: you took samples at a rate of 44.1 kHz, and you have a certain number of frequencies (for which you have calculated magnitudes) that must cover that spectrum from 0 to 44.1 kHz.
 In other words, your frequency distribution is evenly spread out across your sampling rate such that your lowest frequency corresponds to 0 Hz and your highest to 44.1 kHz.
-The consequence of this is that, as predicted, you do not have well-defined frequencies.
+The consequence of this is that, as predicted by Figure ~\ref{fig:dft}, you do not have well-defined frequencies.
 Instead, you have bins of $width=(sample rate)/(array size)$.
 It should be noted that since humans cannot hear above about ~20,000 Hz, the second half of these bins may be safely ignored.
 
 The next step is to determine the representative frequency. 
 The method you choose determines how effective your tuner is at its intended task.
-The simplest method is to simply choose the frequency bin with the largest magnitude, but this solution is inflexible and unresponsive.
+The simplest method is to choose the frequency bin with the largest magnitude, but this solution is inflexible and unresponsive.
 In addition, it may be inaccurate since musical instruments usually have overtones that may hide the fundamental frequency.
 Don't be discouraged, however; it is acceptable if your tuner can identify a pure tone with its nearest note.
-For an example of a pure tone and an excellent test resource, simply search "a440" on YouTube and listen to the first clip.
+For an example of a pure tone and an excellent test resource, simply search "a440" on YouTube and listen to the first clips.
 Alternative methods include curve fitting, interpolation, and harmonic analysis.
-Keep in mind that the method you use is not the point of this lab.
-However, it can be a nice personal touch that can make your tuner stand out from the rest.
+Keep in mind that the method you use is not the point of this lab, though it can be a nice personal touch that makes your tuner stand out from the rest.
 The only requirement concerning your solution is that it must make use of the \ac{fft} and its output.
 
 Once you have identified the fundamental frequency, you must label it with a note.
@@ -53,18 +53,19 @@ That is, each octave contains the same 12 notes.
 The notes are as follows: A, A\#, B, C, C\#, D, D\#, E, F, F\#, G, G\#, with \# pronounced "sharp."
 The standard American scale is based upon the note A 440, which is the A note, 4th octave, at 440 Hz.
 Each octave is a factor of 2 larger or smaller than the next or previous.
-That is, A3 is 220 Hz and A5 is 880 Hz.
+That is to say, A3 is 220 Hz and A5 is 880 Hz.
 In addition, each note is evenly spread out in an octave in equal temperament, such that every note is a constant factor away from its neighbors.
 Since we are on a 12 note scale, this constant factor is the twelfth root of two, $ \sqrt[12]{2}$.
 Note that since each successive octave is twice the size of the previous and the gap between notes gets larger and larger, simply finding the closest note to your estimated fundamental may not be sufficient in all cases.
-You may consider using a log scale to address this issue (that is, taking the logarithm of the frequencies).
+You may consider using a log scale to address this issue.
 It is required that you implement the musical scale in its own class.
 
 Finally, at this stage you should have a note in mind that you think the user is trying to play.
-A simple function is provided in the class, \verb=updateGUI=, that takes four parameters to update the display for the user.
+A simple function is provided in the class \verb=TunerActivity=, \verb=updateGUI()=, that takes four parameters to update the display for the user.
 The parameters in order are as follows: the note with octave (e.g. C\#4),  the estimated fundamental frequency, how far below the note the frequency is, and how far above the note the frequency is.
 Clearly, if the frequency is either above or below the note, then the third or fourth parameter should be zero, respectively.
-The call to \verb=updateGUI= and any final calculations should be contained within the \verb=tune= function.
+The call to \verb=updateGUI()= and any final calculations should be contained within the \verb=tune()= function.
+There is also an optional \verb=tare()= method already bound to the ``Tare" button in the \verb=TunerActivity= layout that is meant to house any interactive noise filtering or thresholding that you may wish to perform.
 
-As always, it is recommended that you do not alter the code that is provided to you as this may make the problem immensely more difficult.
+As always, it is recommended that you do not alter functions that have not been explicitly referenced here as that may make the problem immensely more difficult.
 
