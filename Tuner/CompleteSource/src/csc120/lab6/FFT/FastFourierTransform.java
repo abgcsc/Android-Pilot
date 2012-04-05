@@ -3,9 +3,15 @@ package csc120.lab6.FFT;
 
 public class FastFourierTransform {
 	private static final double log2 = Math.log(2);
-	private static int[][] bitReverse; // stores the reversed-bit index of each index
+	private static int[] bitReverse; // stores the reversed-bit index of each index
 	private static Complex[][] twiddles; // stores the twiddle factors, pre-computed
 	
+	/**
+	 * Initialize the FastFourierTransform class for use. Should only be called once for each input size.
+	 * Size must be a power of 2.
+	 *
+	 * @param size A power of 2, the size of the arrays on which the FFT will operate.
+	 */
 	public static void initialize(int size) {
 		bitReverse = buildBitReverse(size);
 		twiddles = computeTwiddles(size);
@@ -53,26 +59,24 @@ public class FastFourierTransform {
 		int ceiling = input.length/2;
 		for(int i = 0; i < ceiling; i++) {
 			Complex temp = input[i];
-			input[i] = input[bitReverse[0][i]];
-			input[bitReverse[0][i]] = temp;
+			input[i] = input[bitReverse[i]];
+			input[bitReverse[i]] = temp;
 		}
 	}
 	
-	public static int[][] buildBitReverse(int size) {
+	/**
+	 * For each index of an array of length size, calculates the reverse-bit index.
+	 * @param size The number (range) of indices to be reversed.
+	 * @return An array containing the reverse-bit index for each index of the array. That is, array[i] == reverseBits(i)
+	 */
+	public static int[] buildBitReverse(int size) {
 		if (Integer.bitCount(size) != 1) { 
         	throw new RuntimeException("Input array's size not a power of 2."); 
         }
 		int logSize = (int) (Math.log((double) size) / log2);
-		int[][] bits = new int [logSize][];
-		for(int j = 0; j < logSize; j++) {
-			bits[j] = new int [size];
-		}
+		int[] bits = new int [size];
 		for(int i = 0; i < size; i++) {
-			bits[0][i] = reverseBits(i, logSize);
-			bits[logSize-1][i] = i;
-			for(int j = 1; j < logSize-1; j++) {
-				bits[j][i] = rotateLeft(bits[j-1][i], j+1);
-			}
+			bits[i] = reverseBits(i, logSize);
 		}
 		return bits;
 	}

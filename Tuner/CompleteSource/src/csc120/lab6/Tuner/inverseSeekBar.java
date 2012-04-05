@@ -5,6 +5,11 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
 
+/**
+ * Class inverseSeekBar provides an implementation of a ProgressBar that fills up backwards.
+ * @author 
+ *
+ */
 public class inverseSeekBar extends ProgressBar {
 	
 	public inverseSeekBar(Context context, AttributeSet attrs, int defStyle) {

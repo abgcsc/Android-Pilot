@@ -1,6 +1,5 @@
 package csc120.lab6.Tuner;
 
-import csc120.lab6.FFT.Complex;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,41 +13,36 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.support.v4.content.LocalBroadcastManager;
+import csc120.lab6.FFT.*;
 
+/**
+ * Class TunerActivity is in charge of displaying to the user what note 
+ * they are playing and how close the user is to said note.
+ * @author 
+ *
+ */
 public class TunerActivity extends Activity implements OnClickListener{
-    public ProgressBar leftBar;
-    public ProgressBar rightBar;
-    public TextView frequencyDisplay;
-    public TextView noteDisplay;
-    private double[] thresholds = new double[SoundAnalyzer.getBufferSize()/2]; // magnitude thresholds
-    private double[] tFrequencies = new double[SoundAnalyzer.getBufferSize()]; // threshold frequencies
-    public static Bundle b = new Bundle();
-    String lastNote = "A4";
-    MusicNotes Notes = new MusicNotes();
-    public static int audioFlag = 0; // 0 = not reading, 1 = has read
-    int tSwitch = 0;
-    //private SoundAnalyzer mService;
+    public ProgressBar leftBar; // GUI element that indicates the flatness of the note
+    public ProgressBar rightBar; // GUI element that indicates the sharpness of the note
+    public TextView frequencyDisplay; // GUI element that displays the estimated frequency
+    public TextView noteDisplay; // GUI element that displays the estimated note (e.g. C#4)
+    public static MusicNotes notes = new MusicNotes(440);
     
+    /**
+     * Android construct - controls feedback loop with SoundAnalyzer
+     */
     private BroadcastReceiver receiver = new BroadcastReceiver() {
    	 	@Override
    	 	public void onReceive(Context context, Intent intent) {
    	 		Log.d("TunerActivity Receiver", "Got message.");
-   	 		if(tSwitch == 0) {
-   	 			tune();
-   	 		}
-   	 		else {
-   	 			tare();
-   	 			tSwitch = 0;
-   	 		}
+   	 		tune();
    	 		sendRequest();
    	 	}
     };
     
-    public void sendShutdownMessage() {
-    	Intent shutdown = new Intent("AudioShutdown");
-    	LocalBroadcastManager.getInstance(this).sendBroadcast(shutdown);
-    }
-    
+    /**
+     * Android function - requests that an audio sample be collected and analyzed
+     */
     public void sendRequest() {
     	Intent request = new Intent(this, SoundAnalyzer.class);
     	this.startService(request);
@@ -67,19 +61,25 @@ public class TunerActivity extends Activity implements OnClickListener{
         stop.setOnClickListener(this);
         Button tare = (Button) this.findViewById(R.id.tareBttn);
         tare.setOnClickListener(this);
-        //sendRequest(); //get first tare
-        //tare();
-        tSwitch = 1; // tare with the first input
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("AudioEvent"));
+        // set up the FFT to accept arrays of desired size; this function could go anywhere, provided the number of calls to it is small
+        // for example, it could go inside of WelcomeActivity.onCreate()
+        FastFourierTransform.initialize(SoundAnalyzer.getSize()); 
         // start cycle
         sendRequest();
     }
     
+    /**
+     * Android function - called when the activity starts
+     */
     @Override
     public void onStart() {
     	super.onStart();
     }
 
+    /**
+     * Android function - called when something gets clicked
+     */
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
@@ -87,127 +87,77 @@ public class TunerActivity extends Activity implements OnClickListener{
 			this.finish();
 			break;
 		case R.id.tareBttn:
-			tSwitch = 1;
 			break;
 		}
 	}
 	
+	/**
+	 * Android function - called when this activity is finishing
+	 */
 	@Override
 	protected void onDestroy() {
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 		super.onDestroy();
     }
 	
-	public static synchronized void setAudioFlag(int a) {
-		audioFlag = a;
-	}
-	
-	public static synchronized int getAudioFlag() {
-		return audioFlag;
-	}
-	
 	/**
-	 * The main method, it finds the maximum frequency and the nearest note.
+	 * Student:
+	 * This function may include any part of your analysis after you obtain the frequency magnitudes from the FFT. 
+	 * It will automatically be called continuously in concert with SoundAnalyzer.onHandleIntent().
 	 */
 	public void tune() {
-		double[] latestMags = new double[SoundAnalyzer.getBufferSize()/2], latestFreqs = new double[SoundAnalyzer.getBufferSize()];
-		getFreq(latestMags, latestFreqs);
-		int max = getMax(latestMags);
-		if(max != -1) {
-			// note detected
-			double rawFreq = interpolateMaxFrequency(latestMags, max); //latestFreqs[max];
-			int size = Notes.getNotes().length;
-			double[] notes = new double[size];
-			double log2 = Math.log(2);
-			double distance = 1000000;
-			int closest = 0;
-			double freq = Math.log(rawFreq)/log2;
-			for(int y = 0; y < size; y++) {
-				notes[y] = Math.log(Notes.getNotes()[y])/log2;
-				if(Math.abs(freq - notes[y]) < distance) {
-					distance = Math.abs(freq - notes[y]);
-					closest = y;
-				}
-			}
-			lastNote = Notes.getNote(closest);
-			noteDisplay.setText(lastNote);
-			frequencyDisplay.setText("" + rawFreq);
-			if(freq - notes[closest] > 0) { //rightProgressBar 
-				leftBar.setProgress(0);
-				rightBar.setProgress((int) ((distance* (double) 24)* (double) 100));
-			}
-			else { //leftProgressBar 
-				rightBar.setProgress(0);
-				leftBar.setProgress((int) ((distance* (double) 24)* (double) 100));
-			}
-		} 						
-	}
-	
-	public int getMax(double[] magnitudes){
-		int max = 1;
-		int flag = 0;
-		if(magnitudes[1] > thresholds[1]) {
-			max = 1;
-			flag = 1;
+		int noteIndex = notes.getNearestNoteIndex(SoundAnalyzer.getFrequency()); 
+		double logFreq = Math.log(SoundAnalyzer.getFrequency()) / Math.log(2);
+		int left = 0, right = 0; // the left and right progresses
+		if(logFreq < notes.getLogNotes()[noteIndex]) { // less than the note's frequency, to the left
+			/**
+			 * divide by 1/24 because that is the midpoint distance between two notes in log scale.
+			 * 1/24 is also the longest distance possible to the closest note.
+			 * Multiply by 100 to scale to max progress.
+			 */
+			left = (int) ((notes.getLogNotes()[noteIndex] - logFreq) * (double) 24)*100;
 		}
-		for(int z = 1; z < magnitudes.length-1; z++){
-			if(magnitudes[z] > magnitudes[max] && magnitudes[z] > thresholds[z]){
-				max = z;
-				flag = 1;
-			}
+		else { // greater than, to the right
+			right = (int) ((logFreq - notes.getLogNotes()[noteIndex]) * (double) 24)*100;
 		}
-		if(flag == 1) {
-			return max;
-		}
-		else {
-			return -1;
-		}
-	}
-		
-	private void getFreq(double[] magnitudes, double[] frequencies) {
-		if(getAudioFlag() == 1) {
-			if(TunerActivity.b.getBoolean("IsFailure", false) == false) {
-				//Complex[] rMagnitudes = (Complex[]) TunerActivity.b.getParcelableArray("Frequencies");
-				Complex[] rMagnitudes = SoundAnalyzer.getFreqMagnitudes();
-				getMagnitudes(rMagnitudes, magnitudes);
-				//int rate = TunerActivity.b.getInt("SampleRate", 44100);
-				int rate = SoundAnalyzer.getSamplingFrequency();
-				getFrequencies(frequencies.length, rate, frequencies);
-			}
-			else {
-				magnitudes = null;
-				frequencies = null;
-			}
-			setAudioFlag(0);
-		}
+		updateGUI(notes.getNote(noteIndex), 
+				SoundAnalyzer.getFrequency(),
+				left,
+				right);
 	}
 	
 	/**
-	 * Computes minimum thresholds for frequencies based upon the 
-	 * current sound levels input to the Android mic.
+	 * Update the display elements. Should be called once in tune().
+	 * @param latestNote		The latest note that the tuner has identified.
+	 * @param frequency			The latest frequency related to the latest note.
+	 * @param leftProgress		How flat or far below the true note is the frequency? Between 0 and 100.
+	 * @param rightProgress		How sharp or far above the true note is the frequency? Between 0 and 100.
+	 */
+	public void updateGUI(String latestNote, double frequency, int leftProgress, int rightProgress)
+	{
+		noteDisplay.setText(latestNote);
+		frequencyDisplay.setText(""+frequency);
+		leftBar.setProgress(leftProgress);
+		rightBar.setProgress(rightProgress);
+	}
+	
+	/**
+	 * Student:
+	 * This part is optional, but may help improve your functionality. 
+	 * This function would provide interactive thresholding and noise handling.
+	 * For example, you could press the tare button to mask background noise.
 	 */
 	private void tare(){
-		getFreq(thresholds, tFrequencies);
-	}
-	
-	private double[] getMagnitudes(Complex[] rFrequencies, double [] destination) {
-		int size = destination.length;
-		for(int i = 0; i < size; i++){
-			destination[i] = rFrequencies[i].getMagnitude();
-		}
-		return destination;
-	}
-	
-	private double[] getFrequencies(int size, int rate, double [] destination){
-		for(int i = 0; i < size; i++) {
-			destination[i] = (double) i* (double) rate/ (double) size;
-		}
-		return destination;
-	}
-	
-	private double interpolateMaxFrequency(double[] magnitudes, int peakedBin) {
-		double p = 0.5*(magnitudes[peakedBin-1]-magnitudes[peakedBin+1])/(magnitudes[peakedBin-1]-2*magnitudes[peakedBin]+magnitudes[peakedBin+1]);
-		return ((double) peakedBin+p)*(double)SoundAnalyzer.getSamplingFrequency()/(double)SoundAnalyzer.getBufferSize();
+		/**
+		 * Chose to do nothing. Could have collected magnitudes from the FFT
+		 * and stored them in a separate array. The choice of maximum magnitude
+		 * could then be altered such that the maximum must be greater than the 
+		 * value stored in this separate threshold array. The idea is that this 
+		 * will prevent constant dominant sounds from being chosen as the 
+		 * representative frequencies. The consequence is that the function of 
+		 * choosing the max magnitude must be moved into TunerActivity or the 
+		 * separate array is accessed in SoundAnalyzer via a static accessor.
+		 */
 	}
 	
 }
