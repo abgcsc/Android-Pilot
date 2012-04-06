@@ -87,6 +87,7 @@ public class TunerActivity extends Activity implements OnClickListener{
 			this.finish();
 			break;
 		case R.id.tareBttn:
+			tare();
 			break;
 		}
 	}
@@ -115,10 +116,10 @@ public class TunerActivity extends Activity implements OnClickListener{
 			 * 1/24 is also the longest distance possible to the closest note.
 			 * Multiply by 100 to scale to max progress.
 			 */
-			left = (int) ((notes.getLogNotes()[noteIndex] - logFreq) * (double) 24)*100;
+			left = (int) (((notes.getLogNotes()[noteIndex] - logFreq) * (double) 24) * (double) 100);
 		}
 		else { // greater than, to the right
-			right = (int) ((logFreq - notes.getLogNotes()[noteIndex]) * (double) 24)*100;
+			right = (int) (((logFreq - notes.getLogNotes()[noteIndex]) * (double) 24) * (double) 100);
 		}
 		updateGUI(notes.getNote(noteIndex), 
 				SoundAnalyzer.getFrequency(),

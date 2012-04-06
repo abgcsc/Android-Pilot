@@ -123,6 +123,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			running = PState.RUNNING;
 			isRunning = false;
 			previous = System.currentTimeMillis()+100;
+			Log.d("GravThread", "New thread");
 		}
 		
 		/**
@@ -189,6 +190,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		 */
 		@Override
 		public void run(){
+			Log.d("GravThread", "Started running");
 			while (running == PState.RUNNING) {
 				Canvas canvas = null;
 				try {
@@ -203,25 +205,38 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					}
 				}
 			}
+			Log.d("GravThread", "Finished running");
 		}
 		
 		/**
 		 * Stop running, save the state into the given Bundle.
+		 * Pauses and locks the screen.
 		 * @param map
 		 * @return
 		 */
 		public Bundle quit(Bundle map) {
 			synchronized (mSurfaceHolder) {
 				map.putParcelableArrayList("Planetoids", planetoids);
+				pause();
+				lock();
+				//setRunning(false);
+				Log.d("GravThread.quit", "Quit");
 			}
 			return map;
 		}
 		
+		/**
+		 * Restores a previous thread state.
+		 * Unlocks the screen, but does not affect playing/pausing animation.
+		 * @param savedState
+		 */
 		public void restart(Bundle savedState) {
 			synchronized (mSurfaceHolder) {
-				ArrayList<Parcelable> savedPlanetoids = savedState.getParcelableArrayList("Planetoids");
-				for(Parcelable p : savedPlanetoids) {
-				}
+				ArrayList<Planetoid> savedPlanetoids = (ArrayList<Planetoid>) savedState.getParcelableArrayList("Planetoids").clone();
+				planetoids = savedPlanetoids;
+				unlock();
+				//setRunning(true);
+				Log.d("GravThread.restart", "Restarted");
 			}
 		}
 		
@@ -363,8 +378,8 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			if(!isLocked()) {
 				synchronized (mSurfaceHolder) {
 					if(action != MotionEvent.ACTION_CANCEL) {
+						boolean touchedExisting = false;
 						if(motions.containsKey(pointerId) == false) { // new motion
-							boolean touchedExisting = false;
 							Planetoid temp = new Planetoid (null, x, y);
 							for(Planetoid p : planetoids) {
 								if(p.getDistanceTo(temp) < p.getDiameter()/2) {
@@ -384,6 +399,10 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 							}
 						}
 						motions.get(pointerId).setPosition(x, y);
+						if(!touchedExisting) {
+							motions.get(pointerId).setDiameter(motions.get(pointerId).getDiameter()+0.5);
+							motions.get(pointerId).setMass(motions.get(pointerId).getMass()+0.5);
+						}
 						if(action == MotionEvent.ACTION_UP) {
 							motions.get(pointerId).setMomentum(dx, dy);
 						}
@@ -514,7 +533,11 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					mTracker.getYVelocity(event.getPointerId(i)),
 					event.getAction());
 		}
-		return false;
+		if(event.getAction() == MotionEvent.ACTION_UP) {
+			mTracker.clear();
+			mThread.clearMotions();
+		}
+		return true;
 	}
 	
 }
