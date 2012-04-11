@@ -3,7 +3,7 @@ package csc120.lab6.Tuner;
 public class MusicNotes {
 	private static final double log2 = Math.log(2);
 	public static final String[] standardScale = 
-		{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
+		{"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 	private double[] notes; // will store all of the notes' frequencies
 	private double[] logNotes; // will store all of the notes' frequencies in log scale for faster processing
 	
@@ -24,16 +24,16 @@ public class MusicNotes {
 	 * @param baseNote The base note frequency from which all others are derived, in Hz.
 	 */
 	public MusicNotes(double baseNote){
-		this(baseNote, 48);
+		this(baseNote, 57);
 	}
 	
 	/**
 	 * Constructs a MusicNotes object based upon the given base note.
-	 * A 12 note chromatic scale is assumed. For example, MusicNotes(440, 48)
+	 * A 12 note chromatic scale is assumed. For example, MusicNotes(440, 57)
 	 * constructs a scale based upon A4 = 440 Hz.
 	 * 
 	 * @param baseNote The base note frequency from which all others are derived, in Hz.
-	 * @param noteIndex The index of the note taken from the standard chromatic scale, e.g. 48 for A4.
+	 * @param noteIndex The index of the note taken from the standard chromatic scale, e.g. 57 for A4.
 	 */
 	public MusicNotes(double baseNote, int noteIndex) {
 		notes = new double[120];
@@ -73,8 +73,8 @@ public class MusicNotes {
 	 * @return A string containing the name of the note associated with the given index.
 	 */
 	public String getNote(int index){
-		int octave = index/12;
-		int noteIndex = index%12;
+		int octave = (index)/12;
+		int noteIndex = (index)%12;
 		return standardScale[noteIndex] + octave;
 	}
 	
