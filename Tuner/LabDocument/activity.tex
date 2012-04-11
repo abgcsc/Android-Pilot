@@ -1,6 +1,7 @@
 %describe the tasks to be completed that will satisfy the given objective
 \section{Activity}
 Useful and/or necessary background knowledge is first provided in the Theory section, followed by more detailed instructions in the Implementation section.
+Please take note that not all versions of the Android emulator support audio input and output.
 
 \subsection{Theory}
 Refer to this section and subsections as needed during your implementation (see below) of the solution.
@@ -38,7 +39,6 @@ This means that once you give it something, the input is lost (unless you want t
 
 The \verb=Complex= objects the \ac{fft} takes as arguments are simply representations of complex numbers $a+bi$, where $a$ is the real part and $b$ is the imaginary part.
 Complex numbers are intimately related to waves and the \ac{fft}, but the only extent to which you need to understand them is very basic.
-As long as you can perform the operations of complex addition, subtraction, multiplication, and division, you should be fine.
 The \verb=FastFourierTransform= and \verb=Complex= classes are provided for you in the package {\tt csc120.lab6.FFT}.
 
 \subsubsection{Musical Scales}
@@ -60,31 +60,23 @@ These tasks need not be completed in any specific order, though they are present
 You may wish to look up the usage of the following Java keywords or operators if you have not seen them before: \verb=static=, modulo, and casting.
 A resource declared with the \verb=static= keyword is accessible even if there is no object declared.
 The modulo operator (\%) returns the remainder of a division operation.
-Casting converts one data type to another and is useful in avoiding truncation of integers, e.g. \verb+double d = (double) 5 / (double) 7+.
-
-\subsubsection{Implement Complex Numbers}
-Though the \verb=Complex= class has been provided, it is not completely implemented.
-Before the \ac{fft} will work, you must provide the implementation for the following functions: \verb=plus()=, \verb=minus()=, \verb=times()=, and \verb=dividedBy()=.
-Each function takes a \verb=Complex= parameter and returns a \verb=Complex= argument such that \verb=A.plus(B)= equals the sum of two complex numbers A and B.
-As a hint for the division of two complex numbers, consider multiplying the numerator and denominator of the fraction 
-\begin{math}
-(a+bi) / (c+di)
-\end{math} 
- by the conjugate of the denominator, $c-di$.
+Casting effectively converts one data type to another and is useful in avoiding truncation of integers, e.g. \verb+double d = (double) 5 / (double) 7+.
 
 \subsubsection{Get the Audio Data}
 The results of this section should belong in the \verb=SoundAnalyzer.onHandleIntent()= function provided.
 Audio can be retrieved from the microphone by using the \verb=AudioRecord= class.
 Class methods of particular interest are \verb=startRecording()=, \verb=read()=, \verb=stop()=, and \verb=release()=.
-The \verb=AudioRecord= object should be constructed to read 16 bit PCM mono audio at a rate of 44.1 kHz into an array of shorts.
+The \verb=AudioRecord= object should be constructed to read 16 bit PCM mono audio from the microphone at a rate of 44.1 kHz into an array of shorts.
 The size of this array should be a power of 2 (4096 is recommended).
 For further information, refer to the Android API and other internet resources.
+Also refer to classes \verb=AudioFormat= and \verb=MediaRecorder= to obtain necessary constants, such as a reference to 16 bit PCM or the microphone.
 
 \subsubsection{Obtain the Frequency Decomposition}
 This section's contents should also belong in the \verb=SoundAnalyzer.onHandleIntent()= function.
 After obtaining the array of audio shorts, these should be converted into the real components of an array of \verb=Complex= objects (with imaginary components of zero).
 This \verb=Complex= array should then be passed to the function \verb=FastFourierTransform.fft()=.
-The results of the \ac{fft} are contained in the same array.
+However, before the first call to the FFT function, it must be initialized with a call to \verb=FastFourierTransform.initialize(arraySize)=.
+The results of the \ac{fft} are contained in the same array as the input.
 Each index of the output array corresponds to a frequency, and the \verb=Complex= object at an index measures the magnitude of that frequency in the audio signal.
 In other words, the indices map to the locations of the peaks on the right sides of Figures~\ref{fig:cft} and~\ref{fig:dft}, and the magnitudes map to the heights of the peaks.
 An index maps to a frequency according to the following formula: $frequency = index*sampleRate/arraySize$.
@@ -98,7 +90,7 @@ You will want to hold onto this value for later.
 
 \subsubsection{Implement the Musical Scale}
 It is required that you implement the musical scale in its own class.
-The class should provide a function that finds the nearest note to a given frequency as well as a function that calculates the frequency of a desired note.
+The class should provide a function that finds the nearest note to a given frequency as well as functions for retrieving note names and frequencies.
 The first 10 octaves are sufficient to cover the entire range of human hearing.
 
 \subsubsection{Choose the Reference Note}

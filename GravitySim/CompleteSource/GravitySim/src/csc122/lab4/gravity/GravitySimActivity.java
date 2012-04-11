@@ -90,6 +90,13 @@ public class GravitySimActivity extends Activity implements OnClickListener {
 		
 	}
 	
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		mThread.setRunning(false);
+		Log.d("GravActivity", "onDestroy");
+	}
+	
 	/**
 	@Override
 	public void onSaveInstanceState(Bundle outState) {

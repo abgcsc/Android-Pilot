@@ -60,7 +60,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		
 		private Bitmap background;
 		
-		private static final double GRAVITATIONAL_CONST = 100;
+		private static final double GRAVITATIONAL_CONST = 1000;
 		
 		private HashMap<Integer, Planetoid> motions; // used to keep track of successive motion events
 		
@@ -404,7 +404,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 							motions.get(pointerId).setMass(motions.get(pointerId).getMass()+0.5);
 						}
 						if(action == MotionEvent.ACTION_UP) {
-							motions.get(pointerId).setMomentum(dx, dy);
+							motions.get(pointerId).setMomentum(5*dx, 5*dy);
 						}
 					}
 					else {
@@ -486,6 +486,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceCreated(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
 		mThread.start();
+		Log.d("GravCanvas", "surfaceCreated");
 	}
 	
 	/**
@@ -506,11 +507,13 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		boolean retry = true;
         while (retry) {
             try {
+            	mThread.setRunning(false);
                 mThread.join();
                 retry = false;
             } catch (InterruptedException e) {
             }
         }
+        Log.d("GravCanvas", "surfaceDestroyed");
 	}
 
 	/**
