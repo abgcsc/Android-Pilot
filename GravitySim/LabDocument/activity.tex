@@ -1,8 +1,83 @@
 %describe the tasks to be completed that will satisfy the given objective
 \section{Activity}
+This lab will be fairly freeform in execution due to the large control you have over the implementation.
+A theory section is provided to aid in your design of the project solution.
+It is recommended that you look over the theory section at least once before beginning to code.
+Details for the implementation can be found in their own section after Theory.
 
-The lab requires you build a GUI from scratch.
-There are many ways to go about this, but perhaps the most logical is to start by creating the screen which displays the space where the planets will be created and moved about.
-After the display is set up, methods that allow planet creation and define the planets qualities should be made.
-Last, the methods that simulate the movement/merging of the planets due to their mass and relative gravity are needed.
-There should also be a button to start the movement of the planets (planets can be made before start is pressed and gravity is taken into effect), a button to pause the movement and a button to lock/unlock the screen (prevent or allow touch events). 
+\subsection{Theory}
+This section provides background information for various parts of the lab.
+Refer to this section as needed during your implementation.
+
+\subsubsection{Kinematics}
+This section will include formulas and brief introductions for gravitational interaction, motion under constant acceleration, and elastic and inelastic collisions. 
+The student will have the option to modify formulas to alter the physics, though there are some restrictions: the gravitational force must be attractive and proportional to mass, and at least one (elastic or inelastic) collision must be modeled.
+
+\subsubsection{Touch Events}
+
+An explanation of touch events will be given with highlights of their usage and handling, such as how to detect the beginning, middle, and end of motions.
+The student will also be directed toward the \verb=VelocityTracker= class for approximating the velocity of the user's touch gesture.
+
+\subsubsection{Rendering Animation}
+
+A brief description of the classes and methods necessary for animation will be given.
+Images for the background and planets will be provided with instructions for how the student may replace them if desired.
+
+\subsection{Implementation}
+This section will provide a general guide to getting your app running.
+
+\subsubsection{Research}
+If you have not encountered enumerated types or the \verb=final= keyword before, look up their usage in Java.
+In addition, review their usage in the code provided, specifically inside of the class \verb=GravCanvas= and its inner class \verb=GravThread=.
+
+\subsubsection{Design the layout}
+You may use the XML Layout editor in Eclipse to aid you in designing the GUI.
+The layout must provide an ample amount of space for a \verb=GravCanvas SurfaceView=.
+In addition, it must provide buttons or some other device to control pausing/playing of the simulator and locking/unlocking of the screen for touch events.
+
+\subsubsection{Make an Activity}
+Make an activity to hold references to the \verb=GravCanvas=, its \verb=GravThread=, and buttons.
+This activity will handle button clicks and their results as they pertain to the \verb=GravCanvas=.
+Button labels should be kept up to date with their current function if any are multipurpose (``Play" or ``Pause").
+Override \verb=onDestroy()= such that it contains a call to \verb=GravThread.setRunning(false)=.
+
+\subsubsection{Implement Kinematics}
+Decide which physical laws your program will simulate and give an initial value to \verb=GravThread.GRAVITATIONAL_CONST=.
+Inside of class \verb=Planetoid=, add and modify methods for the planet to react to stimuli according to your physical laws.
+Minimum recommended methods include force application and movement for given durations and set methods for momentum and area.
+
+\subsubsection{Model Gravitational Interaction}
+Tasks contained in this section should only occur if animation is set to play.
+Inside of the function \verb=GravThread.gravitate()=, apply forces based upon the gravitational field each planet exerts upon the others .
+These forces should be applied for a certain duration equal to the time elapsed since the last time \verb=gravitate= was called.
+After all the forces have been applied to a planet, move it based upon one or more of the formulas given for motion under constant acceleration.
+If any planets collide (if they would overlap eachother when drawn), either apply an elastic (they bounce off eachother) or inelastic (they merge into one) collision to each.
+You are in control of which of the two types of collision takes effect.
+If a planet would move off of the screen, you may either let it continue or make it bounce off the edge at an appropriate angle (alter the direction of its velocity while retaining the magnitude).
+Planets that continue off the edge of the screen may very well return if the gravitational force is strong enough.
+
+\subsubsection{Handle Touch Events}
+Tasks contained in this section should only occur if the screen is unlocked.
+In \verb=GravCanvas.onTouchEvent()=, handle touch events initiated by the user.
+You will need to interact with \verb=GravCanvas.mThread= in order to affect the animation.
+If one of the motion pointers is positioned over empty space when it begins, create a \verb=Planetoid= at that location and associate it with the pointer.
+Otherwise, associate the existing \verb=Planetoid= at that location with the pointer.
+In addition, the \verb=Planetoid= should be {\em selected} such that it obeys the following constraints: its position is the same as its associated motion pointer, its image is different from unselected \verb=Planetoid=s, and its size and mass slowly increase over time.
+Note, however, that the size and mass should only increase if the \verb=Planetoid= was newly generated, i.e. its associated motion pointer started over empty space.
+When a motion pointer ends, the \verb=Planetoid= is deselected and continues along the trajectory set by the motion pointer's last estimated velocity. 
+The speed of a \verb=Planetoid= released this way should be inversely proportional to its mass.
+Flinging of existing \verb=Planetoid=s  may optionally be allowed on locked screens (but not \verb=Planetoid= generation).
+
+\subsubsection{Debug}
+Try running the app, performing both positive and negative tests.
+For example, do any \verb=Planetoid=s stay selected after a motion event ends or simultaneous finger movements end?
+In addition, does it perform to your desire?
+You may wish to tweak the strength of flinging or your gravitational constant if the planets move too slowly or quickly for your liking.
+Experiment until you find a balance that you enjoy.
+
+\subsubsection{Optional Refinements}
+If you would like to save your progress (at least for as long as the app is running either on the screen or in the background), then you should do the following in your activity.
+Override \verb=onPause()= and \verb=onResume()=. 
+Inside of \verb=onPause()=, call \verb=GravThread.quit()= with a \verb=static Bundle=. 
+Inside of \verb=onResume()=, call \verb=GravThread.restart()= with the same \verb=Bundle=.
+Look inside these functions to discover how your buttons should be labeled.
