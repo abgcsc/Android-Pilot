@@ -127,6 +127,14 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		/**
+		 * Copy over the data from the other GravThread, which has presumably already been run (and cannot be restarted)
+		 * @param other The other GravThread whose contents we want (such as its planetoids).
+		 */
+		public void clone(GravThread other) {
+			planetoids = other.planetoids;
+		}
+				
+		/**
 		 * Is the View (GravCanvas) locked from touch events?
 		 * @return
 		 */
@@ -315,7 +323,8 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		 */
 		private void draw(Canvas canvas) {
 			try {
-				canvas.drawBitmap(background, 0, 0, null);
+				Bitmap temp = Bitmap.createScaledBitmap(background, canvas.getWidth(), canvas.getHeight(), true);
+				canvas.drawBitmap(temp, 0, 0, null);
 				for(Planetoid p : planetoids) {
 					drawPlanetoid(p, canvas);
 				}
@@ -438,6 +447,8 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	
 	private GravThread mThread;
 	
+	private GravitySimActivity mActivity;
+	
 	private VelocityTracker mTracker = VelocityTracker.obtain();
 	
 	private int pointerCount;
@@ -460,6 +471,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 	public void construct(Context context) {
 		SurfaceHolder holder = getHolder();
+		mContext = context;
 		holder.addCallback(this);
 		mThread = new GravThread (holder, context, new Handler() {
             @Override
@@ -476,6 +488,10 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		return mThread;
 	}
 	
+	public void setActivity(GravitySimActivity activity) {
+		mActivity = activity;
+	}
+	
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		//mThread.setScalingFactors((float)this.getWidth()*this.getScaleX(), (float)this.getHeight()*this.getScaleY(), this.getPivotX(), this.getPivotY());
@@ -485,19 +501,27 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
-		mThread.start();
 		Log.d("GravCanvas", "surfaceCreated");
+		boolean retry = true;
+		while(retry) {
+			try {
+				mThread.start();
+				retry = false;
+			} catch (IllegalThreadStateException e) {
+				GravThread old = mThread;
+				mThread = new GravThread(this.getHolder(), mContext, new Handler() {
+		            @Override
+		            public void handleMessage(Message m) {
+		                status.setVisibility(m.getData().getInt("viz"));
+		                status.setText(m.getData().getString("text"));
+		            }
+		        });
+				mThread.clone(old);
+				mActivity.setThread(mThread);
+			}
+		}
 	}
 	
-	/**
-	 * 
-	@Override
-	public void onFocusChanged(boolean gainFocus, int direction, Rect previouslyFocusedRect) {
-		if(gainFocus == false) {
-			mThread.pause();
-		}
-	}*/
-
 	/**
 	 * Terminate thread, cannot interact with surface again
 	 *

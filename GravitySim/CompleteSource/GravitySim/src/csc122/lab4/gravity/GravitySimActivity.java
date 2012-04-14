@@ -25,7 +25,7 @@ public class GravitySimActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simulator);
         surface = (GravCanvas) this.findViewById(R.id.gravCanvas);
-        mThread = surface.getThread();
+        setThread(surface.getThread());
         lock = (Button) this.findViewById(R.id.lockBttn);
         lock.setOnClickListener(this);
         play = (Button) this.findViewById(R.id.pauseBttn);
@@ -87,7 +87,7 @@ public class GravitySimActivity extends Activity implements OnClickListener {
 			mThread.restart(instanceState);
 			flag = false;
 		}
-		
+		surface.setActivity(this);
 	}
 	
 	@Override
@@ -97,29 +97,8 @@ public class GravitySimActivity extends Activity implements OnClickListener {
 		Log.d("GravActivity", "onDestroy");
 	}
 	
-	/**
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		mThread.quit(outState);
-		Log.d("GravActivity.onSaveInstanceState", "Saved");
+	public void setThread(GravThread thread) {
+		mThread = thread;
 	}
-	
-	@Override
-	public void onRestoreInstanceState(Bundle inState) {
-		super.onRestoreInstanceState(inState);
-		mThread.restart(inState);
-		Log.d("GravActivity.onRestoreInstanceState", "Restored");
-	}
-	
-	@Override
-	public void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		if(savedInstanceState != null) {
-			mThread.restart(savedInstanceState);
-			Log.d("GravActivity.onPostCreate", "Restored");
-		}
-	}*/
-	
 	
 }

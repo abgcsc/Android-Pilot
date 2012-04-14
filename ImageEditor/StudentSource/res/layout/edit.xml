@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+  	<ImageView
+  	    android:id="@+id/imageView1"
+  	    android:layout_weight="1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" 
+        android:src="@drawable/capture"
+        />
+  	
+  	<RadioGroup
+        android:id="@+id/widget61"
+        android:layout_width="241px"
+        android:layout_height="59px"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/sepia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sepia "
+            android:onClick="setSepia"
+            />
+
+        <RadioButton
+            android:id="@+id/bandw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Black/White "
+            android:onClick="setBandW"
+            />
+
+        <RadioButton
+            android:id="@+id/invert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invert"
+            android:onClick="setInvert"
+            />
+    </RadioGroup>
+  	
+  	
+  	<Button
+  	    android:id="@+id/rotate"
+  	    android:layout_width="wrap_content"
+  	    android:layout_height="wrap_content"
+  	    android:text="Rotate"
+  	    android:onClick="rotate"
+  	    />
+  	<Button
+  	    android:id="@+id/revert"
+  	    android:layout_width="wrap_content"
+  	    android:layout_height="wrap_content"
+  	    android:text="Revert to Original"
+  	    android:onClick="revert"
+  	    />
+  	<Button
+  	    android:id="@+id/save"
+  	    android:layout_width="wrap_content"
+  	    android:layout_height="wrap_content"
+  	    android:text="Save and Return"
+  	    android:onClick="save"
+  	    />
+
+</TableLayout>

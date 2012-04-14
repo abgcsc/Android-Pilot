@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+  	<ImageView
+  	    android:id="@+id/imageView1"
+  	    android:layout_weight="1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" 
+        android:src="@drawable/capture"
+        android:onClick="takePicture"
+        />
+  	
+  	<Button
+  	    android:id="@+id/camera"
+  	    android:layout_width="wrap_content"
+  	    android:layout_height="wrap_content"
+  	    android:text="Camera"
+  	    android:layout_gravity="left"
+  	    android:onClick="takePicture"
+  	    />
+  	<Button
+  	    android:id="@+id/edit"
+  	    android:layout_width="wrap_content"
+  	    android:layout_height="wrap_content"
+  	    android:text="Edit"
+  	    android:layout_gravity="right"
+  	    android:onClick="editPicture"
+  	    />
+  	<Button
+  	    android:id="@+id/save"
+  	    android:layout_width="wrap_content"
+  	    android:layout_height="wrap_content"
+  	    android:text="Save"
+  	    android:layout_gravity="right"
+  	    android:onClick="savePicture"
+  	    />
+  	<Button
+  	    android:id="@+id/exit"
+  	    android:layout_width="wrap_content"
+  	    android:layout_height="wrap_content"
+  	    android:text="Exit"
+  	    android:layout_gravity="right"
+  	    android:onClick="exit"
+  	    />
+
+</TableLayout>
