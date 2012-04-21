@@ -7,6 +7,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+/**
+ * STUDENT: This class mainly just provides breathing room if the user doesn't want to worry 
+ * about hitting a button or planet. In addition, it allows you to reset the simulator if you 
+ * back out of GravitySimActivity.
+ * @author 
+ *
+ */
 public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
@@ -17,6 +24,9 @@ public class MainActivity extends Activity implements OnClickListener {
 		start.setOnClickListener(this);
 	}
 
+	/**
+	 * Start the Gravity Simulator activity.
+	 */
 	@Override
 	public void onClick(View v) {
 		Intent sim = new Intent (this, GravitySimActivity.class);

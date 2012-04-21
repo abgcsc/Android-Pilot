@@ -10,10 +10,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class GravitySimActivity extends Activity implements OnClickListener {
-	private GravThread mThread;
-	private GravCanvas surface;
-	private static Bundle instanceState = new Bundle();
-	private static boolean flag = false; // whether we have paused or not
+	private GravThread mThread; // the local thread (contained in surface)
+	private GravCanvas surface; // the local surface
 	
     /** Called when the activity is first created. */
     @Override
@@ -23,7 +21,7 @@ public class GravitySimActivity extends Activity implements OnClickListener {
         /**
          * STUDENT:
          * Here is where you should associate this Activity with your layout
-         * and grab references to any buttons and the GravCanvas and GravThreads.
+         * and grab references to any buttons and the GravCanvas and its GravThread.
          * You should set this to be your buttons' OnClickListener.
          */
     }    
@@ -53,6 +51,7 @@ public class GravitySimActivity extends Activity implements OnClickListener {
 		super.onPause();
 		Log.d("GravActivity", "onPause");
 	}
+	
 	/**
 	 * Android function - Called when this activity starts or resumes.
 	 */
@@ -60,17 +59,8 @@ public class GravitySimActivity extends Activity implements OnClickListener {
 	public void onResume() {
 		super.onResume();
 		Log.d("GravActivity", "onResume");
-		surface.setActivity(this);
+		surface.setActivity(this); // STUDENT: This function is required to be here. Remove it at your own peril.
 	}
 	
-	/**
-	 * Android function - Called when this activity is destroyed or finished.
-	 */
-	@Override
-	public void onDestroy(){
-		super.onDestroy();
-		mThread.setRunning(false);
-		Log.d("GravActivity", "onDestroy");
-	}
 		
 }

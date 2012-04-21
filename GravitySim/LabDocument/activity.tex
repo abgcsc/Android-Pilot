@@ -10,21 +10,65 @@ This section provides background information for various parts of the lab.
 Refer to this section as needed during your implementation.
 
 \subsubsection{Kinematics}
-This section will include formulas and brief introductions for gravitational interaction, motion under constant acceleration, and elastic and inelastic collisions. 
-The student will have the option to modify formulas to alter the physics, though there are some restrictions: the gravitational force must be attractive and proportional to mass, and at least one (elastic or inelastic) collision must be modeled.
+First, it should be noted that while certain formulae are provided, you are in no way obligated to use them. 
+However, there are certain restrictions upon your simulator: the gravitational force must be attractive and proportional to mass, and collisions must be modeled in some way, either as a bounce or merge.
+You may add any functionality you wish so long as these restrictions are not violated.
+For example, you could multiply the masses upon merging instead of summing.
+The \verb=Planetoid= class is provided with partial implementations of some of the required physics and functions.
+
+Kinematics is a branch of mechanical physics that describes motion.
+In this case, the kinematics is mainly constrained to that induced by gravity.
+The gravitational force between two objects is given by $$F = G{\frac{m_1m_2}{r^2}}$$ where $G$ is the gravitational constant, $m_1$ and $m_2$ are the masses of both objects, and $r$ is the distance between them.
+$F$ is a vector directed from one object's center of mass to the other's.
+For the purposes of this lab, $G$ may be freely defined as any positive value.
+
+Eventually, two objects attracted by gravity are going to hit eachother.
+One of two things (provided the objects do not break) will occur: an elastic or inelastic collision.
+An inelastic collision happens when the two objects stick together, and can be modelled by the following formula: $$v_{f} = \frac{m_{1}v_{1i}+m_{2}v_{2i}}{m_1+m_2}$$ where subscripts of 1 and 2 denote one object or the other, the $v_i$s are the initial velocities pre-collision, and $v_{f}$ is  the velocity of the merged object.
+Each dimension of motion (x or y) can be solved for separately.
+Elastic collisions, however, are more complicated to adequately model, especially in the presence of 2 or 3 dimensional objects.
+Basically, the momenta are split along the point of collision with the momenta perpendicular to the contact surface exchanged between objects and the momenta tangent to the surface unaffected.
+The velocities perpendicular to the surface of contact between the objects follow the rules for a one-dimensional elastic collision: 
+$$v_{1f} = \frac{m_{1}-m_{2}}{m_{1}+m_{2}}v_{1i}+\frac{2m_{2}}{m_{1}+m_{2}}v_{2i}$$ and
+$$v_{2f} =\frac{2m_{1}}{m_{1}+m_{2}}v_{1i} +\frac{m_{2}-m_{1}}{m_{1}+m_{2}}v_{2i}$$ 
+These formulae may also be applied independently for each dimension for point-like particles.
+Once the particles gain form, however, the results do not appear right.
 
 \subsubsection{Touch Events}
 
-An explanation of touch events will be given with highlights of their usage and handling, such as how to detect the beginning, middle, and end of motions.
-The student will also be directed toward the \verb=VelocityTracker= class for approximating the velocity of the user's touch gesture.
+Touch events on Android can be handled in many different ways.
+The primary class used in their handling is the \verb=MotionEvent= class.
+A brief description of it will be given here.
+A \verb=MotionEvent= object holds data concerning a single instant of a user's touch, and may hold information for multiple touches.
+We will call each individual touch a pointer.
+Two pointers would indicate that the user has two fingers touching the screen.
+Each \verb=MotionEvent= also comes with an \verb=ACTION_MASK= to describe its state. 
+The chief actions that we are interested in are \verb=ACTION_DOWN=, \verb=ACTION_MOVE=, and \verb=ACTION_UP=.
+In order, they describe the beginning, middle, and end of a pointer, though an \verb=ACTION_CANCEL= may interrupt.
+Though each pointer has its own lifecycle, only one \verb=ACTION_DOWN= and \verb=ACTION_UP= are generated for concurrent pointers.
+Therefore, after one pointer goes down, others may come and go without affecting the action.
+The number of pointers, however, can be directly queried with a call to \verb=MotionEvent.getPointerCount()=, and each pointer's position may be individually accessed.
+In order to track pointer velocities, a \verb=VelocityTracker= object can be used to aggregate multiple \verb=MotionEvent=s and estimate pointer velocities individually.
 
 \subsubsection{Rendering Animation}
 
-A brief description of the classes and methods necessary for animation will be given.
-Images for the background and planets will be provided with instructions for how the student may replace them if desired.
+We will be employing the \verb=Canvas= class to render the \verb=Planetoid=s' motions.
+The functional aspects of the \verb=Canvas= class are provided for you in the \verb=GravCanvas= class.
+A \verb=Canvas= is relatively easy to operate; whatever is drawn last at a given pixel is visible.
+You should not need to actually implement any of the animation.
+However, you may wish to change the visuals.
+A background image as well as images for selected and unselected planets are provided.
+You are free to replace these with your own (preferably in .png format with transparent backgrounds).
+For example, in order to replace the background, import the desired image into the \verb=/res/drawable= folder in Eclipse.
+After accomplishing that, change the assignment of \verb=background= in the \verb=GravThread= constructor to \verb=BitmapFactory.decodeResource(res, R.drawable.<your-image-filename>)=.
+The filenames you use must be lowercase.
+Another example of changing the graphics is provided in the \verb=GravThread.draw()= function.
+Take care that your image files are not too large; Android applications do not have much available memory.
 
 \subsection{Implementation}
 This section will provide a general guide to getting your app running.
+Pieces of code that require your attention are prefaced with \verb=STUDENT:=.
+Some of these may provide important information not mentioned here.
 
 \subsubsection{Research}
 If you have not encountered enumerated types or the \verb=final= keyword before, look up their usage in Java.
@@ -32,11 +76,11 @@ In addition, review their usage in the code provided, specifically inside of the
 
 \subsubsection{Design the layout}
 You may use the XML Layout editor in Eclipse to aid you in designing the GUI.
-The layout must provide an ample amount of space for a \verb=GravCanvas SurfaceView=.
+The layout must provide an ample amount of space for a \verb=GravCanvas=, which extends \verb=SurfaceView=.
 In addition, it must provide buttons or some other device to control pausing/playing of the simulator and locking/unlocking of the screen for touch events.
 
-\subsubsection{Make an Activity}
-Make an activity to hold references to the \verb=GravCanvas=, its \verb=GravThread=, and buttons.
+\subsubsection{Complete the Activity}
+A skeleton activity (\verb=GravitySimActivity=) is provided to hold references to the \verb=GravCanvas=, its \verb=GravThread=, and buttons in the layout described above.
 This activity will handle button clicks and their results as they pertain to the \verb=GravCanvas=.
 Button labels should be kept up to date with their current function if any are multipurpose (``Play" or ``Pause").
 Override \verb=onDestroy()= such that it contains a call to \verb=GravThread.setRunning(false)=.
@@ -48,8 +92,8 @@ Minimum recommended methods include force application and movement for given dur
 
 \subsubsection{Model Gravitational Interaction}
 Tasks contained in this section should only occur if animation is set to play.
-Inside of the function \verb=GravThread.gravitate()=, apply forces based upon the gravitational field each planet exerts upon the others .
-These forces should be applied for a certain duration equal to the time elapsed since the last time \verb=gravitate= was called.
+Inside of the function \verb=GravThread.gravitate()=, apply forces based upon the gravitational field each planet exerts upon the others.
+These forces should be applied for a certain duration equal to the time elapsed since the last time \verb=gravitate()= was called.
 After all the forces have been applied to a planet, move it based upon one or more of the formulas given for motion under constant acceleration.
 If any planets collide (if they would overlap eachother when drawn), either apply an elastic (they bounce off eachother) or inelastic (they merge into one) collision to each.
 You are in control of which of the two types of collision takes effect.
@@ -67,6 +111,8 @@ Note, however, that the size and mass should only increase if the \verb=Planetoi
 When a motion pointer ends, the \verb=Planetoid= is deselected and continues along the trajectory set by the motion pointer's last estimated velocity. 
 The speed of a \verb=Planetoid= released this way should be inversely proportional to its mass.
 Flinging of existing \verb=Planetoid=s  may optionally be allowed on locked screens (but not \verb=Planetoid= generation).
+Finally, take note that the selected image will be automatically displayed as long as a planetoid is selected with \verb=Planetoid.select()=.
+A \verb=HashMap= is a suitable choice for handling pointer-\verb=Planetoid= associations.
 
 \subsubsection{Debug}
 Try running the app, performing both positive and negative tests.
@@ -80,4 +126,5 @@ If you would like to save your progress (at least for as long as the app is runn
 Override \verb=onPause()= and \verb=onResume()=. 
 Inside of \verb=onPause()=, call \verb=GravThread.quit()= with a \verb=static Bundle=. 
 Inside of \verb=onResume()=, call \verb=GravThread.restart()= with the same \verb=Bundle=.
+\verb=GravThread.restart()= should not be called if it is the first time for the activity to start.
 Look inside these functions to discover how your buttons should be labeled.

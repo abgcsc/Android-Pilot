@@ -1,4 +1,4 @@
-/**************************************************************************
+    /**************************************************************************
 Programmer: Richard Simmons
 Date: April 13, 2012
 Name: EditActivity.java
@@ -47,8 +47,13 @@ public class EditActivity extends Activity {
         sepia = (RadioButton) findViewById(R.id.sepia);
         bandw = (RadioButton) findViewById(R.id.bandw);
         
-        //gets the passed image
-        imageUri = getIntent().getData();
+        
+        /* STUDENTS CODE
+         
+            Store the retrieved picture into imageUri.
+         
+           STUDENTS CODE*/
+        
         
         Uri selectedImage = imageUri;
         imageView = (ImageView) findViewById(R.id.imageView1);

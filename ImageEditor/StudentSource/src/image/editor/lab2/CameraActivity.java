@@ -59,17 +59,20 @@ public class CameraActivity extends Activity {
     //method to capture image
     public void takePicture(View view) {
     	
-    	//sets the intent to call the camera app
-    	intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    	
-    	//sets the file path to store the captured image
+        
+        //sets the file path to store the captured image
     	String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date(0));
         String imageFileName = timeStamp + "_Pic";
     	File photo = new File(Environment.getExternalStorageDirectory(),  imageFileName);
         
-    	//tells the intent to use this file path
-    	intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(photo));
+        
+    	/*STUDENTS CODE
+            
+         Initialize the intent variable.
+         Code the intent.putExtra() method.
+         
+          STUDENTS CODE*/
+        
         
     	//sets imageUri as the photo file path
     	imageUri = Uri.fromFile(photo);
@@ -133,29 +136,16 @@ public class CameraActivity extends Activity {
    
     //method to start edit activity
     public void editPicture(View view){
+        
     	
-    	//initializes the intent to call EditActivity
-    	intent = new Intent();
-    	
-    	//sets the activity to call
-    	intent.setClass(this, EditActivity.class);
-    	
-    	//makes sure a picture has been captured to edit
-    	if(picCaptured){
-    		
-    		//passes the image through the intent, and starts activity
-    		intent.setData(imageUri);
-    		startActivity(intent);
-    		
-    	}
-    	else{
-    		
-    		//asks user to capture an image to edit
-    		Toast.makeText(this, "Please capture image", Toast.LENGTH_SHORT)
-            .show();
-    		
-    	}
-    	
+    	/* STUDENTS CODE
+         
+            Initialize the intent variable.
+            Set the class the intent needs to start a new activity.
+            Pass the picture to the intent to send to editActivity.
+            Start the intent if picCaptured is set to true.
+         
+           STUDENTS CODE*/
     	
     	
     }

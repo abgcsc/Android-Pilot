@@ -4,6 +4,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable; 
 
+/**
+ * STUDENT: The Planetoid class is already implemented with all of the information required to complete the lab.
+ * You must add functions that simulate the Planetoid's reaction to a force as well as a collision with another Planetoid.
+ * You should have a minimum of 3 functions to accomplish this, one for a force, one for moving, and one for a collision
+ * (for example, to exchange velocities or mass).
+ * @author 
+ *
+ */
 public class Planetoid implements Parcelable{
 	private Drawable image; // the image of the planetoid
 	private double diameter = 2; // the size
@@ -38,6 +46,10 @@ public class Planetoid implements Parcelable{
 		dy = saved.readDouble();
 	}
 	
+	/**
+	 * Android constructor - used to uncompress the Planetoid when the activity is restarted with saved information
+	 * @param saved
+	 */
 	public Planetoid(Parcel saved) {
 		saved.setDataPosition(0);
 		diameter = saved.readDouble();
@@ -48,6 +60,10 @@ public class Planetoid implements Parcelable{
 		dy = saved.readDouble();
 	}
 	
+	/**
+	 * Makes a copy of another planetoid.
+	 * @param orig The Planetoid to be cloned.
+	 */
 	public Planetoid(Planetoid orig)
 	{
 		this.image = orig.image;
@@ -60,6 +76,7 @@ public class Planetoid implements Parcelable{
 		isSelected = orig.isSelected;
 	}
 
+	/** BEGIN GETTERS AND SETTERS**/
 	public double getDiameter() {
 		return diameter;
 	}
@@ -71,41 +88,64 @@ public class Planetoid implements Parcelable{
 	public double getMass() {
 		return mass;
 	}
+	
 	public void setMass(double mass) {
 		this.mass = mass;
 	}
+	
 	public Drawable getImage() {
 		return image;
 	}
+	
 	public void setImage(Drawable image) {
 		this.image = image;
 	}
+	
 	public double getX() {
 		return x;
 	}
+	
 	public double getY() {
 		return y;
 	}
+	
 	public void setPosition(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
+	
 	public double getDx() {
 		return dx;
 	}
+	
 	public double getDy() {
 		return dy;
 	}
+	
 	public void setVelocity(double dx, double dy) {
 		this.dx = dx;
 		this.dy = dy;
 	}
+	/** END GETTERS AND SETTERS **/
+	 
+	/**
+	 * Is the Planetoid selected?
+	 * @return
+	 */
 	public boolean isSelected() {
 		return isSelected;
 	}
+	
+	/**
+	 * Mark this planetoid as selected.
+	 */
 	public void select() {
 		isSelected = true;
 	}
+	
+	/**
+	 * Mark this planetoid as not selected.
+	 */
 	public void deselect() {
 		isSelected = false;
 	}
@@ -171,7 +211,8 @@ public class Planetoid implements Parcelable{
 	public static final PlanetoidCreator CREATOR = new PlanetoidCreator();
 
 	/**
-	 * Android construct - Responsible for converting Planetoid to and from Parcelable at appropriate times.
+	 * Android construct - Responsible for converting Planetoid to and from Parcelable at appropriate times, such as
+	 * saving information temporarily between Activity instances.
 	 */
 	public static class PlanetoidCreator implements Parcelable.Creator<Planetoid> {
 		@Override

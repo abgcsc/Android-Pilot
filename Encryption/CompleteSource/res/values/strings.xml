@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, TextEncryptActivity!</string>
+    <string name="app_name">TextEncrypt</string>
+    <string name="Encrypt">encrypt</string>
+    <string name="decrypt">Decrypt</string>
+    <string name="encrypt">Encrypt</string>
+    <string name="welcome">Welcome to the Encryption Program</string>
+    <string name="Input">Input Message</string>
+    <string name="encrypted">Encrypted Message</string>
+    <string name="original">Original Message</string>
+    <string name="Enter">Enter your secret message</string>
+
+</resources>

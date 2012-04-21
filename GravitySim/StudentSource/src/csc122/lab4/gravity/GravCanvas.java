@@ -33,6 +33,11 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.TextView;
 
+/**
+ * The GravCanvas class is a custom view element that is capable of running an interactive gravity simulator.
+ * @author 
+ *
+ */
 @SuppressWarnings("unused")
 public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	
@@ -46,13 +51,29 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		UNLOCKED, LOCKED
 	}
 	
+	/**
+	 * STUDENT: When adding functions to this class, be sure to put the body of the function inside of the following 
+	 * form:
+	 * 
+	 * synchronized (mSurfaceHolder) {  
+	 * 		//your code goes here//  
+	 * }
+	 * 
+	 * Since functions in this class may run on different threads, this is necessary to prevent concurrent modifications.
+	 * For example, you may try to delete a Planetoid while it is being used by something else.
+	 * Concurrent modifications will cause your program to crash.
+	 * @author 
+	 *
+	 */
 	class GravThread extends Thread {
-		
+		// STUDENT: use this Arraylist to store any Planetoids you create
 		private ArrayList<Planetoid> planetoids; //  the planetoids with associated image, location, and velocity
 		
+		// STUDENT: your Planetoids should get their Drawable images from this ArrayList
 		private ArrayList<Drawable> planets; // the planet images
 		
-		private Planetoid selected; // the selected planet, if any; selected planets exert gravity on others but do not themselves move
+		// the selected planet, if any; selected planets exert gravity on others but do not themselves move
+		private Planetoid selected; // drawn in place of a selected planet's normal image
 		
 		private Bitmap background; // the background image
 		
@@ -63,18 +84,19 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		
 		private Handler mHandler; // does something Android-y
 		
-		private Context mContext;
+		private Context mContext; // same as above
 		
-		private PState running = PState.PAUSED;
+		private PState running = PState.PAUSED; // whether the thread is running
 		
 		private boolean isRunning = false; // whether the thread is playing or paused
 		
-		private GState locked = GState.UNLOCKED;
+		private GState locked = GState.UNLOCKED; // whether the screen is locked from touch events
 		
-		private Random mRandom = new Random ();
+		private Random mRandom = new Random (); // random number generator..why is it here?
 		
 		long previous; // starting time of previous frame
 		
+		// these variables are used to scale the Canvas drawing coordinates to the screen
 		private float xViewScale;
 		private float yViewScale;
 		private float xPivot;
@@ -94,6 +116,12 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			planetoids = new ArrayList<Planetoid> ();
 			planets = new ArrayList<Drawable> ();
 			
+			/**
+			 * STUDENT: Image resources are loaded here. Images are found in /res/drawable and must be
+			 * imported into the project. Their names must be lowercase. planet1, selected, and background
+			 * or your own substitutes are required images. You are free to add more, but be mindful of
+			 * memory usage.
+			 */
 			Resources res = context.getResources();
 			planets.add(res.getDrawable(R.drawable.planet1));
 			selected = new Planetoid(res.getDrawable(R.drawable.selected));
@@ -104,9 +132,9 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			//planetoids.get(0).setDiameter(100);
 			//planetoids.get(0).setMass(74);
 			
-			running = PState.RUNNING;
-			isRunning = false;
-			previous = System.currentTimeMillis()+100;
+			running = PState.RUNNING; // the thread is running
+			isRunning = false; // but it isn't playing
+			previous = System.currentTimeMillis()+100; // give a little bit of time to setup
 			Log.d("GravThread", "New thread");
 		}
 		
@@ -178,6 +206,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		
 		/**
 		 * Idle callback (effectively) for the GravThread.
+		 * Makes repeated calls to draw and calculate gravitation as often as possible.
 		 */
 		@Override
 		public void run(){
@@ -210,7 +239,6 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				map.putParcelableArrayList("Planetoids", planetoids);
 				pause();
 				lock();
-				//setRunning(false);
 				Log.d("GravThread.quit", "Quit");
 			}
 			return map;
@@ -226,7 +254,6 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				ArrayList<Planetoid> savedPlanetoids = (ArrayList<Planetoid>) savedState.getParcelableArrayList("Planetoids").clone();
 				planetoids = savedPlanetoids;
 				unlock();
-				//setRunning(true);
 				Log.d("GravThread.restart", "Restarted");
 			}
 		}
@@ -235,6 +262,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		 * Updates the locations of all of the planetoids and their respective velocities.
 		 */
 		private void gravitate(){
+			// STUDENT: use these time variables to determine how much time has elapsed since the last round of interaction
 			long now = System.currentTimeMillis();
 			
 			if(previous > now) return; // cannot move in the past
@@ -272,30 +300,26 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		public void drawPlanetoid(Planetoid given, Canvas canvas){
 			Bitmap temp;
 			if(!given.isSelected()) {
-				temp = Bitmap.createScaledBitmap(((BitmapDrawable) given.getImage()).getBitmap(), (int) given.getDiameter(), (int) given.getDiameter(), true);
-				//temp =((BitmapDrawable) given.getImage()).getBitmap();			
+				temp = Bitmap.createScaledBitmap(((BitmapDrawable) given.getImage()).getBitmap(), (int) given.getDiameter(), (int) given.getDiameter(), true);		
 			}
 			else {
 				temp = Bitmap.createScaledBitmap(((BitmapDrawable) selected.getImage()).getBitmap(), (int) given.getDiameter(), (int) given.getDiameter(), true);
-				//temp =((BitmapDrawable) selected.getImage()).getBitmap();
 			}
-			//Drawable tempDraw = new BitmapDrawable(Bitmap.createScaledBitmap(temp, (int) given.getDiameter(), (int) given.getDiameter(), true));
 			canvas.save();
 			canvas.scale(xViewScale/canvas.getWidth(), yViewScale/canvas.getHeight(), xPivot, yPivot);
 			canvas.drawBitmap(temp, (float) (given.getX()-given.getDiameter()/2.0), (float) (given.getY()-given.getDiameter()/2.0), null);
 			/**
 			 * STUDENT:
-			 * Here is an example for drawing a solid gray circle instead of the Planetoid image, if you desire different colors.
+			 * Here is an example for drawing a solid gray circle instead of the Planetoid image. See the Color class for other colors.
 			 * Paint color = new Paint ();
 			 * color.setColor(Color.GRAY);
 			 * canvas.drawCircle((float) given.getX(), (float) given.getY(), (float) (given.getDiameter()/2.0), color);
 			 */
-			
 			//Log.d("GravThread.drawPlanetoid", "Planetoid drawn");
 		}
 		
 		/**
-		 * Sets scaling factors so that the GravThread can draw to the correct coordinates in the view.
+		 * Sets scaling factors so that the GravThread can draw to the correct coordinates in the View.
 		 * @param xScale
 		 * @param yScale
 		 * @param px
@@ -310,36 +334,54 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			}
 		}
 		
-	}
+		/**
+		 * STUDENT: A function that handles touch events should go somewhere before that next bracket.
+		 */		
+	} // this one
 	
-	private Context mContext;
+	private Context mContext; // it does something
 	
-	private TextView status;
+	private TextView status; // not really necessary
 	
-	private GravThread mThread;
+	private GravThread mThread; // the local thread, controls animation. very necessary
 	
-	private GravitySimActivity mActivity;
+	private GravitySimActivity mActivity; // the activity holding this GravCanvas. see surfaceCreated() for more details
 	
-	private VelocityTracker mTracker = VelocityTracker.obtain();
-	
-	private int pointerCount;
-	
+	/**
+	 * Default constructor, effectively. Not likely to be called.
+	 * @param context
+	 */
 	public GravCanvas(Context context) {
 		super(context);
-		// TODO Auto-generated constructor stub
+		construct(context);
 	}
 	
+	/**
+	 * Constructor necessary to function as a View.
+	 * @param context
+	 * @param attributeSet
+	 */
 	public GravCanvas(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
 		construct(context);
 	}
 	
+	/**
+	 * Another constructor necessary to function as a View.
+	 * @param context
+	 * @param attributeSet
+	 * @param defStyle
+	 */
 	public GravCanvas(Context context, AttributeSet attributeSet, int defStyle) {
 		super(context, attributeSet, defStyle);
 		construct(context);
 		
 	}
 
+	/**
+	 * Performs actions necessary for initialization, such as creation of the inner GravThread.
+	 * @param context
+	 */
 	public void construct(Context context) {
 		SurfaceHolder holder = getHolder();
 		mContext = context;
@@ -351,24 +393,40 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
                 status.setText(m.getData().getString("text"));
             }
         });
-		//mThread.setScalingFactors((float)this.getWidth()*this.getScaleX(), (float)this.getHeight()*this.getScaleY(), this.getPivotX(), this.getPivotY());
         setFocusable(true); // make sure we get key events
 	}
 	
+	/**
+	 * Get this GravCanvas' inner GravThread.
+	 * @return
+	 */
 	public GravThread getThread() {
 		return mThread;
 	}
 	
+	/**
+	 * Sets the activity that is holding this GravCanvas in a layout.
+	 * @param activity The activity calling this method.
+	 */
 	public void setActivity(GravitySimActivity activity) {
 		mActivity = activity;
 	}
 	
+	/**
+	 * The screen was rotated. 
+	 * STUDENT: It is recommended that you disable screen rotations on your phone if this 
+	 * function ever gets called, as it may cause display problems.
+	 */
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		//mThread.setScalingFactors((float)this.getWidth()*this.getScaleX(), (float)this.getHeight()*this.getScaleY(), this.getPivotX(), this.getPivotY());
 		mThread.setScalingFactors((float) this.getWidth(), (float) this.getHeight(), 0, 0);
 	}
 
+	/**
+	 * Create the surface upon which things will be drawn and the user will touch.
+	 * It may also be required to restart the thread when the screen turns off and back on
+	 * or in various other scenarios.
+	 */
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
@@ -376,9 +434,9 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		boolean retry = true;
 		while(retry) {
 			try {
-				mThread.start();
+				mThread.start(); // try to start the thread
 				retry = false;
-			} catch (IllegalThreadStateException e) {
+			} catch (IllegalThreadStateException e) { // the thread had already been started, cannot be started again
 				GravThread old = mThread;
 				mThread = new GravThread(this.getHolder(), mContext, new Handler() {
 		            @Override
@@ -388,14 +446,13 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		            }
 		        });
 				mThread.clone(old);
-				mActivity.setThread(mThread);
+				mActivity.setThread(mThread); // update the activity to the new thread
 			}
 		}
 	}
 	
 	/**
-	 * Terminate thread, cannot interact with surface again
-	 *
+	 * Terminate thread, cannot interact with surface again.
 	 */
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
@@ -426,7 +483,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		 * The VelocityTracker should do its approximations here with each
 		 * new event.
 		 */
-		return false;
+		return false; // change this to true if you want to get the next MotionEvent.
 	}
 	
 }

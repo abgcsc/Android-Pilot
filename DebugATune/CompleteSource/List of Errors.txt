@@ -1,0 +1,9 @@
+1. ErrorManagementActivity.java(97)	Compiler	typo	a.fillfreq(al);
+2. ErrorManagement.java(6,10,13,27,35,37,43) Linker	Failure to import Java.util.ArrayList	import the file
+3. ErrorManagement.java(27)	compiler	typo	freqget(i);	freq.get(i);
+4. ErrorManagement.java(43)	compiler	typo	freq.size()	freq.size();
+5. ErrorManagement.java(15)	Runtime	infinite loop	;i--)	;i++)
+6. ErrorManagement.java(23)	Runtime	index out of bounds	;i<10;	;i<notes.size;
+7. ErrorManagement.java(35)	Runtime	logical error	freq.size()>5)	freq.size()>0)
+
+NOTE: error 7 may not be caught by the student, there will be no flag in the program or any disruption of operation.

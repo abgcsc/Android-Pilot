@@ -63,6 +63,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		private static final double GRAVITATIONAL_CONST = 1000;
 		
 		private HashMap<Integer, Planetoid> motions; // used to keep track of successive motion events
+		private HashMap<Integer, Boolean> newFlags; // used to keep track of which pointers generated new planets or grabbed old ones
 		
 		private SurfaceHolder mSurfaceHolder;
 		
@@ -98,6 +99,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			planets = new ArrayList<Drawable> ();
 			collapsers = new ArrayList<Drawable> ();
 			motions = new HashMap<Integer, Planetoid> ();
+			newFlags = new HashMap<Integer, Boolean> ();
 			
 			Resources res = context.getResources();
 			planets.add(res.getDrawable(R.drawable.planet1));
@@ -405,10 +407,14 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 								n.select();
 								planetoids.add(n);
 								motions.put(pointerId, n);
+								newFlags.put(pointerId, true);
+							}
+							else {
+								newFlags.put(pointerId, false);
 							}
 						}
 						motions.get(pointerId).setPosition(x, y);
-						if(!touchedExisting) {
+						if(newFlags.get(pointerId)) {
 							motions.get(pointerId).setDiameter(motions.get(pointerId).getDiameter()+0.5);
 							motions.get(pointerId).setMass(motions.get(pointerId).getMass()+0.5);
 						}
@@ -437,6 +443,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			catch (NullPointerException e) {
 			}
 			motions.clear();
+			newFlags.clear();
 			//motions = new HashMap<Integer, Planetoid> ();
 		}
 	}
@@ -549,7 +556,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		Log.d("GravCanvas.onTouchEvent", "Touch event recorded");
 		pointerCount = event.getPointerCount();
 		if(event.getAction() == MotionEvent.ACTION_DOWN) {
-			mTracker.clear();
+			mTracker.clear();			
 			mThread.clearMotions();
 		}
 		mTracker.addMovement(event);
