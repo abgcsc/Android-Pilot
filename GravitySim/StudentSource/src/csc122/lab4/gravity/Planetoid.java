@@ -8,7 +8,7 @@ import android.os.Parcelable;
  * STUDENT: The Planetoid class is already implemented with all of the information required to complete the lab.
  * You must add functions that simulate the Planetoid's reaction to a force as well as a collision with another Planetoid.
  * You should have a minimum of 3 functions to accomplish this, one for a force, one for moving, and one for a collision
- * (for example, to exchange velocities or mass).
+ * (for example, to exchange velocities or mass). You should wait until all forces are accounted for before moving.
  * @author 
  *
  */

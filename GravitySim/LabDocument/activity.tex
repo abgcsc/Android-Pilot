@@ -24,10 +24,17 @@ For the purposes of this lab, $G$ may be freely defined as any positive value.
 
 Eventually, two objects attracted by gravity are going to hit eachother.
 One of two things (provided the objects do not break) will occur: an elastic or inelastic collision.
-An inelastic collision happens when the two objects stick together, and can be modelled by the following formula: $$v_{f} = \frac{m_{1}v_{1i}+m_{2}v_{2i}}{m_1+m_2}$$ where subscripts of 1 and 2 denote one object or the other, the $v_i$s are the initial velocities pre-collision, and $v_{f}$ is  the velocity of the merged object.
+An inelastic collision happens when the two objects stick together, and can be modeled by the following formula: $$v_{f} = \frac{m_{1}v_{1i}+m_{2}v_{2i}}{m_1+m_2}$$ where subscripts of 1 and 2 denote one object or the other, the $v_i$s are the initial velocities pre-collision, and $v_{f}$ is  the velocity of the merged object.
 Each dimension of motion (x or y) can be solved for separately.
 Elastic collisions, however, are more complicated to adequately model, especially in the presence of 2 or 3 dimensional objects.
 Basically, the momenta are split along the point of collision with the momenta perpendicular to the contact surface exchanged between objects and the momenta tangent to the surface unaffected.
+Figure~\ref{fig:elastic2d} illustrates this concept.
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.8\textwidth]{Elastic2D.png}
+\caption{An elastic collision in 2 dimensions acts only on the axis perpendicular to the collision surface. Here you can see that the tangent components of velocity $v_{1t}$ and $v_{2t}$ are unaffected. The total velocities $v_1$ and $v_2$ on the other hand do change.}
+\label{fig:elastic2d}
+\end{figure}
 The velocities perpendicular to the surface of contact between the objects follow the rules for a one-dimensional elastic collision: 
 $$v_{1f} = \frac{m_{1}-m_{2}}{m_{1}+m_{2}}v_{1i}+\frac{2m_{2}}{m_{1}+m_{2}}v_{2i}$$ and
 $$v_{2f} =\frac{2m_{1}}{m_{1}+m_{2}}v_{1i} +\frac{m_{2}-m_{1}}{m_{1}+m_{2}}v_{2i}$$ 
@@ -62,7 +69,7 @@ You are free to replace these with your own (preferably in .png format with tran
 For example, in order to replace the background, import the desired image into the \verb=/res/drawable= folder in Eclipse.
 After accomplishing that, change the assignment of \verb=background= in the \verb=GravThread= constructor to \verb=BitmapFactory.decodeResource(res, R.drawable.<your-image-filename>)=.
 The filenames you use must be lowercase.
-Another example of changing the graphics is provided in the \verb=GravThread.draw()= function.
+Another example of changing the graphics is provided in the \verb=GravThread.drawPlanetoid()= function.
 Take care that your image files are not too large; Android applications do not have much available memory.
 
 \subsection{Implementation}

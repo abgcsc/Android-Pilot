@@ -41,6 +41,7 @@ import android.widget.TextView;
 @SuppressWarnings("unused")
 public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	
+	//STUDENT: These are enumerated types used to identify the state of the program.
 	// state of the program
 	public enum PState {
 		RUNNING, PAUSED
@@ -88,6 +89,7 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		
 		private PState running = PState.PAUSED; // whether the thread is running
 		
+		// STUDENT: This variable determines play/pause, contrary to what the enumerated PState types suggest.
 		private boolean isRunning = false; // whether the thread is playing or paused
 		
 		private GState locked = GState.UNLOCKED; // whether the screen is locked from touch events
@@ -194,6 +196,10 @@ public class GravCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			previous = System.currentTimeMillis()+100;
 		}
 		
+		/**
+		 * Allow or terminate the thread's execution.
+		 * @param state The state of the thread. A value of false will end the thread's operation.
+		 */
 		public void setRunning(boolean state)
 		{
 			if(state == true) {

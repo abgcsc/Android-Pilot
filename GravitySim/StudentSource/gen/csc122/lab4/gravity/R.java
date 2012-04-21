@@ -18,17 +18,11 @@ public final class R {
         public static final int selected=0x7f020004;
     }
     public static final class id {
-        public static final int gravCanvas=0x7f050002;
-        public static final int linearLayout1=0x7f050003;
-        public static final int lockBttn=0x7f050004;
-        public static final int pauseBttn=0x7f050005;
-        public static final int quitBttn=0x7f050006;
         public static final int startBttn=0x7f050001;
         public static final int welcomeText=0x7f050000;
     }
     public static final class layout {
         public static final int main=0x7f030000;
-        public static final int simulator=0x7f030001;
     }
     public static final class string {
         public static final int app_name=0x7f040001;
