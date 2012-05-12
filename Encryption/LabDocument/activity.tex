@@ -1,19 +1,17 @@
 %describe the tasks to be completed that will satisfy the given objective
 \section{Activity}
-\begin{enumerate}
+This section describes the tasks to be completed that will satisfy the given objectives.
+\subsection{Background Information}
 
-\item Use throw clause for \verb= generateKey()= method to handle exception.
+An exception is an event, that occurs at the time of the execution of a program, which breaks the normal flow of the program's instructions. A program can use exceptions to point out that an error has taken place. To throw an exception, use the throw statement and provide it with an exception object (a descendant of Throwable) to give information about the specific error that occurred. A throws clause must be included in the decleration of method if a method throws an uncaught, checked exception. A program can catch exceptions by utilizing a combination of the try, catch, and finally blocks. The try block recognizes a block of code in which an exception can occur. The catch block determines a block of code, known as an exception handler, which can manage a particular kind of exception. The finally block identifies a block of code that will certainly execute, and is the appropriate place to close files, recover resources, and otherwise clean up after the code confined in the try block. The try statement must have at least one catch block or a finally block and can have multiple catch blocks. The type of exception thrown can be determined by the class of the exception object. More information about the error can be found by the exception object. With exception chaining, an exception can direct to the exception that caused it, which can successively detail about the exception that caused it, and so forth.
 
-\item Use try and catch blocks to handle the exception for \verb= generateKey()= method. In the catch block use \verb= printStackTrace()= method of throwable class to handle the exception.
+\subsection{Implementation}
+This section will guide you in completing the labs.
+\subsubsection{Add Throw Clauses} 
 
-\item Use throw clause for \verb= encrypt()= method to handle exception.
+Use the throw statement for\verb= generateKey()=,\verb= encrypt()=and\verb= decrypt()= methods to handle exceptions.
 
-\item Use try and catch blocks to handle the exception for \verb= encrypt()= method. In the catch block use \verb= printStackTrace()= method of throwable class to handle the exception.
-
-\item Use throw clause for \verb= decrypt()= method to handle exception.
-
-\item Use try and catch blocks to handle the exception for \verb= decrypt()= method. In the catch block use \verb= printStackTrace()= method of throwable class to handle the exception.
-\end{enumerate}
-
+\subsubsection{ Add Try and Catch blocks}
+Use try and catch blocks to manage the exception for\verb= generateKey()=,\verb= encrypt()=and\verb= decrypt()= methods. In the catch block use \verb= printStackTrace()= method of throwable class to handle the exception by printing the stack trace to the System.Err stream.
 
 

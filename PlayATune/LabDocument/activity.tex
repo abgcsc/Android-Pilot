@@ -1,0 +1,35 @@
+%describe the tasks to be completed that will satisfy the given objective
+\section{Activity}
+This section will guide you to successful completion of the lab.
+Two subsections fulfill this purpose, the first of which provides background information and the second of which lists sequential steps to follow. 
+
+\subsection{Background Information}
+This section provides information you may require to finish the lab successfully. 
+Refer to it as needed while you follow the steps outlined below.
+
+\subsubsection{Arrays}
+An array is an elementary data structure that stores homogeneous information in discrete locations called buckets or slots. 
+Each bucket holds exactly one of the type the array was instantiated to hold. 
+In Java, arrays may be explicitly declared, or you may use an {\tt ArrayList}. 
+In this project you will use both.
+
+\subsubsection{Loops}
+Loops are constructs that provide repetition until some specific condition occurs. Such a condition is called an exit condition. There are two main kinds of loops in Java: a {\tt FOR} loop and a {\tt WHILE} loop. {\tt WHILE} loops take a boolean value as a parameter and execute the body of the loop until the boolean is false. This boolean value is called a sentinel value; so long as it is {\tt true}, the loop will execute.  Moreover, this parameter may be either an explicit boolean constant (i.e., {\tt true} or {\tt false}), a boolean variable reference, or a function call that returns a boolean type. {\tt FOR} loops behave a little differently. They take three parameters, each separated by a semicolon (e.g., {\tt for (i=0; i<10; i++)}). The first parameter is executed before the first iteration of the body of the loop. The second parameter is the exit condition and is checked before each iteration of the body of the loop. The final parameter is executed after completing each iteration of the body of the loop.
+
+\subsection{Implementation}
+
+This lab will allow you to create a simple Android application that will play a tune.  You will be provided a Java source file named {\tt PlayATune.java}. This file contains the skeleton framework that will be used by {\tt PlayATuneHelper.java} in order to retrieve proper frequencies for musical notes.
+
+To complete this lab successfully you will need to:
+
+\begin{enumerate}
+\item Create an array of type String named {\tt notes}, instantiated to contain the letters C, D, E, F, G, A, and B.
+\item Create an {\tt ArrayList} variable of type {\tt Integer} named {\tt freq}.
+\item Properly initialize the {\tt ArrayList}.
+\item Modify the {\tt fillFreq()} method to copy the contents of {\tt a} into {\tt freq} using a {\tt FOR} loop.
+\item Using a {\tt FOR} loop, modify the {\tt getFreq()} method to search the {\tt notes} array for the parameter {\tt s} using the index of {\tt s} within {\tt notes} to return the value contained in {\tt freq}. The method should return {\tt -1} upon failure.
+\item Using a {\tt WHILE} loop, modify the {\tt clearAll()} method so that it will remove all elements from {\tt freq}.
+\item Modify {\tt getSize()} so that it returns the current size of {\tt freq}
+\end{enumerate}
+
+Once all tasks have been completed, compile your project and test it on the emulator and Android developer device. If successfully completed, you will be rewarded with a familiar tune.

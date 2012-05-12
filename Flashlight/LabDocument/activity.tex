@@ -1,49 +1,51 @@
 %describe the tasks to be completed that will satisfy the given objective
 \section{Activity}
+This section will provide directions that will help you finish the lab.
 
-\subsection{Researach}
+\subsection{Research}
 Read through the Hello World tutorial at http://developer.android.com/resources/tutorials/hello-world.html and any other tutorial you might be interested in.
 The Android framework fundamentals is also good information on the basic components of an Android application - http://developer.android.com/guide/topics/fundamentals.html. 
 
 We will be working with the \verb=Camera= class because the LED flashlight is part of the camera.
-Look at the \verb=Camera= class, specifically the \verb=Camera.open=, \verb=Camera.getParameters=, \verb=Camera.setParameters=, \verb=Camera.startPreview=, and \verb=Camera.stopPreview= - http://developer.android.com/reference/android/hardware/Camera.html
-We will also be using the Camera.Parameters class using the \verb=Camera.Parameters.setFlashMode= method. http://developer.android.com/reference/android/hardware/Camera.Parameters.html \\ \#setFlashMode(java.lang.String).  
+Look at the \verb=Camera= class, specifically \verb=Camera.open()=, \verb=Camera.getParameters()=, \verb=Camera.setParameters()=, \verb=Camera.startPreview()=, and \verb=Camera.stopPreview()=, at the following website - http://developer.android.com/reference/android/hardware/Camera.html
+We will also be using the Camera.Parameters class using the \verb=Camera.Parameters.setFlashMode= method. http://developer.android.com/reference/android/hardware/Camera.Parameters.html - \\ \#setFlashMode(java.lang.String).  
 
-\subsection{Exlpore}
+\subsection{Explore}
 Open the \verb=FlashlightActivity.java= file and familiarize yourself with the code provided.
 Read all the comments and note the parts of the code you will be writing.
 The parts you will be writing will be clearly marked.
+
 \subsection{Flashlight Off Method}
-First, locate the \verb=flashlightClicked= method of the \verb=FlashlightActivity= class.
+First, locate the \verb=flashlightClicked()= method of the \verb=FlashlightActivity= class.
 This method will run whenever you touch the screen.
-It gets called by the \verb=onTouch= method.
-More on the \verb=onTouch= method later.
-Back in the \verb=flashlightClicked= method, notice the if statement.
-If the flashlight is on, it runs the \verb=turnOffFlashlight= method.
+It gets called by the \verb=onTouch()= method.
+The \verb=onTouch()= method will be covered later.
+Back in the \verb=flashlightClicked= method, notice the \verb=IF= statement.
+If the flashlight is on, it runs the \verb=turnOffFlashlight()= method.
 This method is empty and will be created by you.
-Likewise, if the flashlight is off, it runs \verb=the turnFlashlightOn= method.
+Likewise, if the flashlight is off, it runs \verb=the turnFlashlightOn()= method.
 You will create this as well.
 
-Inside of the \verb=turnOffFlashlight= method, first you will need to set the flash mode to off.
-Do this by calling the \verb=setFlashMode()= method of camParams.
-You will pass it a string of value “off”.
+Inside of the \verb=turnOffFlashlight()= method, first you will need to set the flash mode to off.
+Do this by calling the \verb=setFlashMode()= method of \verb=camParams=.
+You will pass it a string of value ``off"�.
 Next, we will pass the \verb=camParams= object to the \verb=setParameters()= method of the \verb=Camera= class variable.
 Finally, you will close the camera preview that was started in \verb=turnOnFlashlight()=.
 To do this, call the \verb=stopPreview()= method of the \verb=Camera= class variable. 
-Make sure to set \verb=isFlashlightOn= boolean to false, so out application will know the flashlight is off.
+Make sure to set \verb=isFlashlightOn= boolean to false, so the application will know the flashlight is off.
 
 \subsection{Flashlight On Method}
-Inside of the \verb=turnOnFlashlight= method, first you will need to set the flash mode to off.
+Inside of the \verb=turnOnFlashlight()= method, first you will need to set the flash mode to off.
 Do this by calling the \verb=setFlashMode()= method of \verb=camParams=.
-You will pass it a string of value “torch”.
+You will pass it a string of value ``torch"�.
 Next, we will pass the \verb=camParams= object to the \verb=setParameters()= method of the camera class variable.
 Finally, you will close the camera preview that was started in \verb=turnOnFlashlight()=.
 To do this, call the \verb=startPreview()= method of the \verb=Camera= class variable.
 Make sure to set \verb=isFlashlightOn= boolean to false, so out application will know the flashlight is off.
 
 \subsection{OnTouch Method}
-Locate the \verb=onTouch= method inside the \verb=FlahslightActivity= class.
-You will edit this method to check if the \verb=MotionEvent= parameter is ‘touch down’ action.
+Locate the \verb=onTouch()= method inside the \verb=FlashlightActivity= class.
+You will edit this method to check if the \verb=MotionEvent= parameter is a ``touch down" action.
 To accomplish this task, call the \verb=getAction()= method of the \verb=MotionEvent (event)= parameter and check if this is equal to the \verb=MotionEvent.ACTION_DOWN= integer.
 If these are equal, you will call the \verb=flashlightClicked()= method and pass it the \verb=View= (v) variable as the parameter.
 

@@ -1,4 +1,29 @@
-/*%describe the tasks to be completed that will satisfy the given objective
+%describe the tasks to be completed that will satisfy the given objective
 \section{Activity}
+In this section the overall activity of this lab will be described with a bit of background information to prepare you for the implementation section that follows.
+\subsection{Background Information}
+For order of operations make sure that you obey the following order:
+\begin{enumerate}
+\item Parentheses
+\item Exponents
+\item Multiplication/Division (left to right)
+\item Addition/Subtraction (left to right)
+\end{enumerate}
 
-The Purpose of this lab is to take the calculator from the previous calculator lab and add order of operations to it. It should follow the standard P.E.M.D.A.S. order. This should be inmplemented through recursion.
+Part of this lab requires the use of a stack.  A stack is a data structer that has the properties of last in, first out.  This can be visually represented by a stack of papers on a desk in which the only piece of paper you can access is the top on.  To get to the bottom of the stack you must 'pop' off the top piece one at a time until you have reache the last piece.  Conversely you can only 'push' pieces back on top of the stack one at a time.  This idea will be used extensively in evaluating expressions in the order specified above, but the actual implementation of a stack will be simplified with the use of Java's built in Stack class.  Please look at Oracle's Java API's for more information specific to the Java Stack class.
+
+For the recursive math functions please research online about how to implement the specific required mathematical operations recursively.  They are both really simple and finding examples should not be hard.
+
+\subsection{Implementation}
+In this section the implementation of this lab will be described in a manner such that you should be able to complete it with your current knowledge and a moderate amount of research.
+\subsubsection{Order of Operations}
+In this part of the lab you will be implementing order of operations in the calculator that you completed in the Calculator I lab.  To do the will require the use of some stacks and some flags.  
+
+Initially you will need to create a stack and a flag associated with that stack.  This stack will contain the initial numbers and operators that will be typed in by the user.  The flag will be set to true when a multiplication or division operator is reached in the stack and then as soon as another number pushed onto the stack the current expression is popped off of the stack and its result is pushed back onto the stack.  Elsewise if it is an addition or subtraction operator it will continue reading input until a multiplicaiton or division operator or a parentheses (this is a special case) is reached.
+
+If a parentheses is reached you must initialize a new stack with a new flag and then push and pop the values into that stack as described above.  This should be done until the close parentheses is reached, at which point all that should be in the stack is a single expression that should require order of operations to compute.  This expression should be popped off, evaluated, and pushed back.  Once all that is in the stack is a single value, it is popped off and that value is pushed onto the stack that called the stack that just closed out.
+
+Exponents should be handled immediately unless parentheses are involved, in which the value inside the parentheses should be calculated and then the exponent should be calculated.
+
+\subsubsection{Recursive Math Functions}
+Many math functions such as square root and greatest common denominator can be calculated recursively.  Recursion is the process where a function calls itself and passes a new value.  After the last recursive call has been completed the functions then return their values back to the function that called them.  For this lab you must implement square root and greatest common denominator using recursion.  The best way to approach this is to find a way online to solve these problems using recursion and use that as an example for your own implementation.

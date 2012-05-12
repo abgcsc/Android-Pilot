@@ -1,0 +1,28 @@
+\section{Activity}
+This section will give you information on the actual work necessary to complete the lab. The Background Information section will provide suplementary information and the Implementation section will provide guidelines for completing the lab.
+\subsection{Implementation}
+This section will guide you through the implementation of the solution.
+\subsubsection{Research}
+You will need to look through the Google NFC Demo application at 
+http://developer.android.com/resources /samples/NFCDemo/index.html.
+You will also need to look through the Google Maps View tutorial at http://developer.android.com/resources/ tutorials/views/hello-mapview.html.Make sure to read through these tutorials very carefully; they will greatly aid you when writing this application.
+You will be using these two tutorial applications to create your scavenger hunt application.
+You should also read through the Android NFC guide found at 
+http://developer.android.com/guide/topics/nfc/nfc.html.
+This guide will help you understand more about using NFC classes in an Android application.
+
+\subsubsection{External Libraries}
+For this application you will need to download an external library.
+This library is called the "Google Guava" library.
+It can be found at http://code.google.com/p/guava-libraries/.
+Just download the latest version of the Jar from this website (at the time of this document the latest version was 12.0).
+In eclipse go to Project-> Properties -> Java Build Path -> Libraries Tab.
+In this window, click "Add External JARs" and find the "Google Guava" Jar you just downloaded.
+
+\subsubsection{Explore}
+This application is going to work by scanning an NFC tag programmed with plain text that hold the latitude and longitude of the next NFC tag.
+In order to catch the NFC tag, you must create an \verb=intent-filter= in the \verb=AndroidManifest.xml= file.
+More information about how to filter intents can be found at the Android NFC guide linked above.
+The data from the NFC tag will be pulled as a String.
+You will need to take this string and parse the latitude and longitude data, which is semicolon delimited (i.e. 31.7563;89.38383).
+The application will then take the latitude and longitude and pass them to the GPS activity, which will display the coordinates as a \verb=Overlay= item on a \verb=MapView=.
